@@ -1,0 +1,71 @@
+/* LandingPage.css follows Tachyons naming conventions */
+.min-h6{
+  min-height: 6rem;
+}
+
+.pa-3{
+  padding: 3%;
+}
+
+.mh{
+  max-height: 48rem;
+}
+
+/* media queries that match Tachyons -ns, -m, -l  breakpoints to implement custom classes when necessary */
+@media screen and (min-width: 30em) { 
+}
+
+@media screen and (min-width: 30em) and (max-width: 60em) {
+  .min-h10-m{
+    min-height: 10rem;
+  }
+}
+
+@media screen and (min-width: 60em) {
+  .w-45-l {
+    width: 45%;
+  }
+  .grow-l {
+    -moz-osx-font-smoothing:grayscale;
+    backface-visibility:hidden;
+    transform:translateZ(0);
+    transition:transform 0.25s ease-out;
+  }
+  .grow-l:hover {
+    transform: scale(1.05);
+  }
+  .pointer-l:hover {
+    cursor: pointer;
+  }
+ 
+  .pa-2-l{
+    padding: 2%;
+  }
+
+  .mv-4-l{
+    margin-top: 4%;
+     margin-bottom: 4%; 
+  }
+  .min-h20-l{
+    min-height: 20rem;
+  }
+
+  .max-mr-10-l{
+    margin-right: min(13.3rem, 10%);
+  }
+  .hover-bg-gray-l:hover { background: #777777; }
+}
+
+/* custom media query nl NOT LARGE */
+@media screen and (max-width: 60em) { 
+  .h-35-nl{
+    height:  35%
+  }
+  .h-100-nl{
+    height: 100%
+  }
+  .mh3-nl{
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+}
