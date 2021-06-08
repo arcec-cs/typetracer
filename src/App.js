@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import LandingPage from './LandingPage/LandingPage'
+import TypeTracerApp from './TypeTracerApp/TypeTracerApp'
 class App extends Component {
   constructor() { 
     super();
@@ -7,9 +8,10 @@ class App extends Component {
     }
   }
   render() {
-    return ( 
-      <>
-        <LandingPage/>
+    return (
+      <> 
+      {/* <LandingPage/> */}
+      <TypeTracerApp/>
       </> 
     );
   }

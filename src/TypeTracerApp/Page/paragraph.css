@@ -1,0 +1,21 @@
+/* paragraph.css  media queries/naming conventions  Tachyons -m, -l  breakpoints */
+.indent-custom {
+  text-indent: 1em;
+}
+
+/* mb to proved whitespace between paragraphs that match line-heights*/
+.mb{
+  margin-bottom: .875rem * 1.5;
+}
+
+@media screen and (min-width: 30em) and (max-width: 60em) {
+  .mb-m{
+    margin-bottom: 1.25rem * 1.5;
+  }
+}
+
+@media screen and (min-width: 60em) {
+  .mb-l{
+    margin-bottom: 1.5rem * 1.5;
+  }
+}
