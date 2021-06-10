@@ -10,34 +10,38 @@ class TypeTracerApp extends Component {
     
     //have to load text from AWS 3S /TypeTracerDB 
     this.text = fetchedText;
-    this.progress = { //keeps track of latest progress 
-      page: 0,
+    this.furthestIndexStore = { //keeps track of furthest progress 
+      page: 4,
+      para: 1,
+      sen: 0,
+      c_start: 0
     }
 
     //states used to manipulate page
     this.textOnPage = []; //will consist of already typed text and text the user is typing
+    //this.pageCurrent = 4; //keep track of the current page
     this.indexer = { //keeps track of typing postion in book, will load user progress from Ttracer db
-      para : 0,
-      sen : 0, 
+      page: 4,
+      para: 1,
+      sen: 0, 
       c_start: 0 
     };
     this.isInputCorrect = true; // says if textInput matches expected input, not state bc changes before & with textInput state already
     
     this.state = { 
       textInput: '',
-      currentPage: 1
     };
   }
 
   componentDidMount(){
     //make network request here to fetch data from s3/TypeTracer db
-    const page = this.state.currentPage;
     const indexer = this.indexer;
     // initilize textOnPage with progress 
     for(let p = 0; p <= indexer.para; p++) {
       this.textOnPage.push([]); //init new para array
       for(let s = 0; s <= indexer.sen; s++) {
-        this.textOnPage[p].push(this.text[page][p][s]);
+        console.log(this.text[indexer.page][p][s])
+        this.textOnPage[p].push(this.text[indexer.page][p][s]);
       }
     }
     this.setState({}); // to get to re-render  NEW
@@ -45,15 +49,14 @@ class TypeTracerApp extends Component {
 
   onTextInputChange = (event) => { //pubclassfeild syntax sets on method instance/ normal func on prototype
     const indexer = this.indexer;
-    const page = this.state.currentPage;
 
     //check user input word by word; a word is "word" + " "
     const userInput = event.target.value;
-    const expectedInput = this.text[page][indexer.para][indexer.sen].slice(indexer.c_start, indexer.c_start + userInput.length);
+    const expectedInput = this.text[indexer.page][indexer.para][indexer.sen].slice(indexer.c_start, indexer.c_start + userInput.length);
     const isInputCorrect = userInput == expectedInput; 
 
     this.isInputCorrect = isInputCorrect;//passed down to set styles on current word being typed
-    //console.log(`userInput: ${userInput} | expectedInput  ${expectedInput} ; isCorrect: ${isInputCorrect}`);
+    console.log(`userInput: ${userInput} | expectedInput  ${expectedInput} ; isCorrect: ${isInputCorrect}`);
     (isInputCorrect && this.isEndOfWord(userInput)) ? this.nextWord(userInput)
     : this.setState({textInput: userInput});
   }
@@ -68,34 +71,38 @@ class TypeTracerApp extends Component {
     const inputIsEmpty = (input == ''); //beginning of a word
     return (!inputIsEmpty && inputIsEndOfWord ? true : false);  
   }
-  setIndexes(input){ // called for newWord
-    const page = this.state.currentPage;
+  setIndexes(input) { // called for newWord
+    const fIndex = this.furthestIndexStore;
     const indexer = this.indexer;
     const text = this.text;
    
     //already passed conditon for new word. move to starting index
     indexer.c_start = indexer.c_start + input.length;  
+    if(indexer.page == fIndex.page) fIndex.c_start = indexer.c_start;
    
     //index markers
-    const indexEOSen = text[page][indexer.para][indexer.sen].length - 1;
+    const indexEOSen = text[indexer.page][indexer.para][indexer.sen].length - 1;
     const isEOSen = (indexer.c_start > indexEOSen); // c_start was indexed past sentence bounds of the sentence
-
+    console.log(`page: ${indexer.page} para:${indexer.para} sen:${indexer.sen} `)
     //if End Of significant text, figure out which case and set this.indexer/ add to textOnPage
     if(isEOSen) { 
       //EO index markers 
-      const indexEOPara = text[page][indexer.para].length - 1; 
-      const indexEOPage = text[page].length -1;
+      const indexEOPara = text[indexer.page][indexer.para].length - 1; 
+      const indexEOPage = text[indexer.page].length -1;
       //EO boolean
       const isEOPara = (indexer.sen == indexEOPara); //at the last sentence of para
-      const isEOPage = (page  == indexEOPage); // at last paragraph of page
+      const isEOPage = (indexer.para == indexEOPage); // at last paragraph of page
       
-      //Check Cases
+      //Check Cases: we always set indexes, if on furthest page we also append to the page.
       if(!isEOPara) { //end of sentence in a paragraph but not the last one
         indexer.sen = indexer.sen + 1; //increment EO
         //reset indexes
         indexer.c_start = 0; 
-        //Append Sen: next sentence of para
-        this.textOnPage[indexer.para].push(this.text[page][indexer.para][indexer.sen]);
+        //If Furthest, Append Sen: next sentence of para
+        if(indexer.page == fIndex.page) {
+          this.textOnPage[indexer.para].push(this.text[indexer.page][indexer.para][indexer.sen]);
+          fIndex.sen = indexer.sen; 
+        }
       } 
       else if(isEOPara && !isEOPage) { //at last sentence in paragraph
         indexer.para = indexer.para + 1; //increment EO 
@@ -103,27 +110,66 @@ class TypeTracerApp extends Component {
         indexer.c_start = 0; 
         indexer.sen = 0;
         //Append Para: init and add first sen
-        this.textOnPage.push([]); // init next para
-        this.textOnPage[indexer.para].push(this.text[page][indexer.para][indexer.sen]);
+        if(indexer.page == fIndex.page) { //if furthest page we write to it 
+          this.textOnPage.push([]); // init next para
+          console.log()
+          this.textOnPage[indexer.para].push(this.text[indexer.page][indexer.para][indexer.sen]);
+          fIndex.para = indexer.para;
+        }
       }
-      // else if(isEOPara && isEOPage) {
-      //   this.setState({currentPage: page++}) // increment EO
-      //   //reset indexes
-      //   indexer.c_start = 0; // reset beg word
-      //   indexer.sen = 0;//reset beg sentence
-      //   indexer.para = 0; //next para, increment
-      //   //Next
-      //   this.textOnPage = [[]]
-  
-      //   //TODO  NEED TO FIGURE OUT IF WE WANT TO AUTO GO TO NEXT PAGE OR HAVE SOME PROMPT
-      //   //CURRENTLY FIGURING OUT HOW TO HANDLE MOVING OT NEXT PAGE
-      // }
-      // recordProgress();   
+      else if(isEOPara && isEOPage) {
+        //reset incrementors to begining of page upon completion
+        indexer.para = indexer.sen = indexer.c_start = 0;
+        //if Unlocked next page!Increment furthest index store to begining of next page
+        if(indexer.page == fIndex.page){//if furthest page
+          fIndex.page++;
+          fIndex.para = fIndex.sen = fIndex.c_start = 0;
+        } 
+      }
+      //recordProgress();   
     }  
   }
 
+  onPageFlip = (event) => {
+    let indexer = this.indexer;
+    let fIndex = this.furthestIndexStore;
+
+    const buttonId = event.currentTarget.id; //currentTarget points to where handler is bound
+    indexer.page = (buttonId == 'Next' ? (indexer.page + 1) : (indexer.page - 1));
+    console.log(indexer.page)
+    //set textOnPage of page pageNum; 
+    if(indexer.page == this.furthestIndexStore.page) { 
+      this.furthestPageBuilder(); //build part of the page which was typed
+      indexer.c_start = fIndex.c_start;//set indexer to furthestIndexes, progress on the furthest page
+      indexer.sen = fIndex.sen;
+      indexer.para = fIndex.para;
+    } else { //already typed whole page, render whole page and start at begining
+      this.textOnPage = this.text[indexer.page];
+      indexer.c_start = indexer.sen = indexer.para = 0; //reset indexes to beginning of page 
+    } 
+    //set state to reset text input to rerender/user input does not apply to next page
+    this.setState({textInput: ''});
+  }
+
+  furthestPageBuilder() {
+    //reset textOnPage
+    this.textOnPage = [];
+    const fIndex= this.furthestIndexStore;
+    //Build:iterate though para and sen of the page to get to furthest indexes and store in textOnPage
+    for(let p = 0; p <= fIndex.para; p++) {
+      this.textOnPage.push([]); //init new para array
+      let senEnd = (p == fIndex.para) ? fIndex.sen // add only written setence of the furthest paragraph
+      : this.text[fIndex.page][p].length -1; //add all sentences of already written paragraphs
+      for(let s = 0; s <= senEnd; s++) {
+        this.textOnPage[p].push(this.text[fIndex.page][p][s]);
+      }
+    }
+  }
+
   render() {
-    const indexer = this.indexer; 
+    const indexer = this.indexer;
+    console.log(indexer)
+    console.log(this.furthestIndexStore) 
     //console.log(`text: ${this.textOnPage} isC: ${this.isInputCorrect} para: ${indexer.para} sen: ${indexer.sen} charS: ${indexer.c_start} charE: ${indexer.c_start + this.state.textInput.length}`)  
     return (
       <div className = 'vh-100 flex justify-center'>
@@ -136,8 +182,11 @@ class TypeTracerApp extends Component {
             charStart={indexer.c_start}
             charEnd={indexer.c_start + this.state.textInput.length}
           />
-          <InputBar 
-            textInput = {this.state.textInput} 
+          <InputBar
+            hasNextButton={indexer.page < this.furthestIndexStore.page}
+            hasLastButton={indexer.page != 1}
+            onButtonClick={this.onPageFlip} 
+            textInput={this.state.textInput} 
             onTextInputChange={this.onTextInputChange}
           />
         </div>
