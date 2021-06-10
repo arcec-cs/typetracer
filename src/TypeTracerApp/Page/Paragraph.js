@@ -5,7 +5,7 @@ import './paragraph.css'
 const Paragraph = ({text, senCur, isCorrect, charStart, charEnd}) => {
   //get sentences of page, only current sentence of current page needs styling props
   const sentenceList = text.map((sen, ind) => {
-    if(ind != senCur) return <Sentence key={ind} text = {sen}/>
+    if(ind != senCur) return <span key={ind}>{sen}</span>
     else {
       return <Sentence
         key={ind} 
