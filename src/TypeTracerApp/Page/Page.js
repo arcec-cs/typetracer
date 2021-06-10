@@ -7,9 +7,10 @@ import Paragraph from './Paragraph';
 const Page = ({text, isCorrect, paraCur, senCur, charStart, charEnd}) => {
   //get paragraphs of page, only current sentence of current page needs styling props
   const paragraphList = text.map((para, ind) =>{
-    if(ind != paraCur) return <Paragraph text={para}/>
+    if(ind != paraCur) return <Paragraph key={ind} text={para}/>
     else {
-      return <Paragraph 
+      return <Paragraph
+        key={ind} 
         text={para}
         senCur={senCur}
         isCorrect={isCorrect}

@@ -24,7 +24,7 @@ class TypeTracerApp extends Component {
   componentDidMount(){
     //make network request here to fetch data from s3/TypeTracer db
     this.text = fetchedText; //Book text fetched form S3
-    this.furthestIndexStore = {page: 400, para: 1, sen: 0, c_start: 0 }//fetched from TT db
+    this.furthestIndexStore = {page: 2, para: 1, sen: 0, c_start: 0 }//fetched from TT db
     this.indexer = Object.assign({}, this.furthestIndexStore) // users starts at lastest progress
     this.furthestPageBuilder(); // build furthest page
     this.setState({}); //to get to re-render for 
@@ -155,7 +155,7 @@ class TypeTracerApp extends Component {
     //console.log(`text: ${this.textOnPage} isC: ${this.isInputCorrect} para: ${indexer.para} sen: ${indexer.sen} charS: ${indexer.c_start} charE: ${indexer.c_start + this.state.textInput.length}`)  
     return (
       <div className = 'vh-100 flex justify-center'>
-        <div name className='dib ma2'>
+        <div className='dib ma2'>
           <Page 
             text={this.textOnPage}
             isCorrect={this.isInputCorrect}
