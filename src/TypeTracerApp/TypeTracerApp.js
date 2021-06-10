@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import fetchedText from './temp/ink-text2600.json'
-
+import fetchedText from './temp/ink-text2600.json' //locally loaded, will be fetched in production
 import Page from './Page/Page'
 import InputBar from './InputBar/InputBar'
 
@@ -9,23 +8,12 @@ class TypeTracerApp extends Component {
     super(props);
     
     //have to load text from AWS 3S /TypeTracerDB 
-    this.text = fetchedText;
-    this.furthestIndexStore = { //keeps track of furthest progress 
-      page: 4,
-      para: 1,
-      sen: 0,
-      c_start: 0
-    }
+    this.text = {}; //holds paginated book
+    this.furthestIndexStore = {page: 1, para: 0, sen: 0, c_start: 0} //keeps track of furthest progress, fetched from Ttracer db
 
     //states used to manipulate page
     this.textOnPage = []; //will consist of already typed text and text the user is typing
-    //this.pageCurrent = 4; //keep track of the current page
-    this.indexer = { //keeps track of typing postion in book, will load user progress from Ttracer db
-      page: 4,
-      para: 1,
-      sen: 0, 
-      c_start: 0 
-    };
+    this.indexer = {page: 1, para: 0, sen: 0, c_start: 0}; //keeps track of typing postion in book
     this.isInputCorrect = true; // says if textInput matches expected input, not state bc changes before & with textInput state already
     
     this.state = { 
@@ -35,16 +23,11 @@ class TypeTracerApp extends Component {
 
   componentDidMount(){
     //make network request here to fetch data from s3/TypeTracer db
-    const indexer = this.indexer;
-    // initilize textOnPage with progress 
-    for(let p = 0; p <= indexer.para; p++) {
-      this.textOnPage.push([]); //init new para array
-      for(let s = 0; s <= indexer.sen; s++) {
-        console.log(this.text[indexer.page][p][s])
-        this.textOnPage[p].push(this.text[indexer.page][p][s]);
-      }
-    }
-    this.setState({}); // to get to re-render  NEW
+    this.text = fetchedText; //Book text fetched form S3
+    this.furthestIndexStore = {page: 400, para: 1, sen: 0, c_start: 0 }//fetched from TT db
+    this.indexer = Object.assign({}, this.furthestIndexStore) // users starts at lastest progress
+    this.furthestPageBuilder(); // build furthest page
+    this.setState({}); //to get to re-render for 
   }
 
   onTextInputChange = (event) => { //pubclassfeild syntax sets on method instance/ normal func on prototype
@@ -125,8 +108,7 @@ class TypeTracerApp extends Component {
           fIndex.page++;
           fIndex.para = fIndex.sen = fIndex.c_start = 0;
         } 
-      }
-      //recordProgress();   
+      }   
     }  
   }
 
