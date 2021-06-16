@@ -41,17 +41,22 @@ class App extends Component {
     else if(localStorage.categories) return <BucketList type='category' info={localStorage.categories}/>;
       else return loader;
   }
+
+  onBrowseByChange = (event) =>{
+    const browseId = event.currentTarget.id
+    this.setState({browse: browseId})
+  }
  
   
   render() {
     let titleEntries = localStorage.titleEntries; // react throws CORS in chrome when JSON.parse is given null
     if(titleEntries != null) titleEntries = JSON.parse(localStorage.titleEntries)
     
-    const display = this.getCurrentDisplay(); // conditionally render display acc this.state.browse
+    const display = this.getCurrentDisplay(); // conditionally render display acc this.
    
     return (
       <div name='CatalogContainer' className=''> 
-        <CatalogHeader/>
+        <CatalogHeader onBrowseByClick = {this.onBrowseByChange}/>
         {display}
       </div> 
     );
