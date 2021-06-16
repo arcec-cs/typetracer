@@ -1,9 +1,9 @@
 import React, {Component } from 'react';
-import TitleCard from './TitleCard';
 import titleEntries from './temp/titles.json'
 import authors from './temp/authors.json'
 import BucketList from './BucketList';
 import TitleCardList from './TitleCardList';
+import CatalogHeader from './CatalogHeader'
 
 class App extends Component {
   constructor(props) { 
@@ -26,11 +26,13 @@ class App extends Component {
   }
   
   render() {
-    const titleEntries = JSON.parse(localStorage.titleEntries);
+    let titleEntries = localStorage.titleEntries; // react throws CORS in chrome when JSON.parse is given null
+    if(titleEntries != null) titleEntries = JSON.parse(localStorage.titleEntries)
     return (
       <div name='CatalogContainer' className=''> 
-        {/* {titleEntries != null && <TitleCardList titleInfoArr={titleEntries}/>} */}
-        <BucketList type='author' info={authors}/>
+        <CatalogHeader/>
+        {titleEntries != null && <TitleCardList titleInfoArr={titleEntries}/>}
+        {/* <BucketList type='author' info={authors}/> */}
       </div> 
     );
   }
