@@ -13,24 +13,24 @@ class App extends Component {
     this.shouldFetch = false;
     
     this.state = { 
-      browseBy: 'titles'
+      path: 'titles'
     }
   }
 
   componentDidMount() {
-    const browseBy =  this.state.browseBy;
-    if(!localStorage[browseBy])this.fetchBrowseByContent() 
+    const path =  this.state.path;
+    if(!localStorage[path])this.fetchpathContent() 
   }  
   componentDidUpdate() { 
-    if(this.shouldFetch === true){ this.fetchBrowseByContent();}
+    if(this.shouldFetch === true){ this.fetchPathContent();}
   }
 
-  fetchBrowseByContent(){
-    const browseBy = this.state.browseBy;
-      fetch(`http://localhost:3005/catalog/${browseBy}`)
+  fetchPathContent(){
+    const path = this.state.path;
+      fetch(`http://localhost:3005/catalog/${path}`)
       .then(res=> res.json())
-      .then(data => localStorage[browseBy] = JSON.stringify(data))
-      .then(a => console.log(`Fetching: ${localStorage[browseBy]}`))
+      .then(data => localStorage[path] = JSON.stringify(data))
+      .then(a => console.log(`Fetching: ${localStorage[path]}`))
       .then(a => this.shouldFetch = false)
       .then(a => this.setState({})) //re-render with fetched data
       .catch(error => console.log(error))
@@ -41,20 +41,20 @@ class App extends Component {
     const loader = <span className='tc'><Loader type="ThreeDots" color="#000000" height={80} width={80} timeout={20000}/></span>;
     
     //conditionally render content of the Catalog page based of browse state
-    const browseBy = this.state.browseBy; 
-    if(browseBy === 'titles') 
+    const path = this.state.path; 
+    if(path === 'titles') 
       if(localStorage.titles) return <TitleCardList titleInfoArr={JSON.parse(localStorage.titles)}/>;//check localstorage for content
       else {this.shouldFetch = true; return loader}// if not fetch and indicate loading to user
-    else if(browseBy == 'authors')
+    else if(path == 'authors')
       if (localStorage.authors) return <BucketList type='author' info={JSON.parse(localStorage.authors)}/>;
       else {this.shouldFetch = true; return loader}
     else if(localStorage.categories) return <BucketList type='category' info={JSON.parse(localStorage.categories)}/>;
       else {this.shouldFetch = true; return loader}
   }
 
-  onBrowseByChange = (event) =>{
-    const browseBy = event.currentTarget.id
-    this.setState({browseBy: browseBy})
+  onPathChange = (event) =>{
+    const path = event.currentTarget.id
+    this.setState({path: path})
   }
  
   
@@ -63,7 +63,7 @@ class App extends Component {
    
     return (
       <div name='CatalogContainer' className=''> 
-        <CatalogHeader onBrowseByClick = {this.onBrowseByChange}/>
+        <CatalogHeader onBrowseByClick = {this.onPathChange}/>
         {display}
       </div> 
     );
