@@ -1,9 +1,17 @@
 import React from 'react';
 
 // BucketList component used to make a list of categories or authors, the two "buckets" which Texts go in
-const BucketList = ({type, info}) => {
-  const header = (type === 'authors' ? 'Authors:' : 'Categories:');
-  const list = info.map( entry => <li class="f3-l ph3 pv3 bb b--light-silver underline pointer">{entry[type]}</li>)
+const BucketList = ({type, info, onItemClick}) => {
+  const header = (type === 'author' ? 'Authors:' : 'Categories:');
+  const pathFirst = (type === 'author' ? 'authors' : 'categories');
+  const list = info.map(entry =>
+     <li
+     onClick={onItemClick} 
+     id={`${pathFirst}/${entry['id']}`}
+     key={`${entry['id']}`} 
+     class="f3-l ph3 pv3 bb b--light-silver underline pointer">
+      {entry[type]}
+    </li>);
 
   return ( 
   <article class="pa3 pa4-ns">

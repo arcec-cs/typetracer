@@ -31,7 +31,7 @@ class App extends Component {
       fetch(`http://localhost:3005/catalog/${path}`)
       .then(res=> res.json())
       .then(data => this.cache[path] = JSON.stringify(data))
-      .then(a => console.log(`Fetching: ${this.cache[path]}`))
+      //.then(a => console.log(`Fetching: ${this.cache[path]}`))
       .then(a => this.shouldFetch = false)
       .then(a => this.setState({})) //re-render with fetched data
       .catch(error => console.log(error))
@@ -43,13 +43,16 @@ class App extends Component {
     
     //conditionally render content of the Catalog page based of browse state
     const path = this.state.path; 
-    if(path === 'titles') 
+    if(path.includes('/')) 
+      if(this.cache[`${path}`]) return <TitleCardList titleInfoArr={JSON.parse(this.cache[`${path}`])}/>;
+      else {this.shouldFetch = true; return loader}
+    else if(path === 'titles') 
       if(this.cache.titles) return <TitleCardList titleInfoArr={JSON.parse(this.cache.titles)}/>;//check this.cache for content
       else {this.shouldFetch = true; return loader}// if not fetch and indicate loading to user
     else if(path == 'authors')
-      if (this.cache.authors) return <BucketList type='author' info={JSON.parse(this.cache.authors)}/>;
+      if (this.cache.authors) return <BucketList onItemClick={this.onPathChange} type='author' info={JSON.parse(this.cache.authors)}/>;
       else {this.shouldFetch = true; return loader}
-    else if(this.cache.categories) return <BucketList type='category' info={JSON.parse(this.cache.categories)}/>;
+    else if(this.cache.categories) return <BucketList onItemClick={this.onPathChange} type='category' info={JSON.parse(this.cache.categories)}/>;
       else {this.shouldFetch = true; return loader}
   }
 
