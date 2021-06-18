@@ -10,7 +10,7 @@ const TitleCard = ({title, author, category,  words, id, authorId, categoryId, t
       onClick={titleClick}
       >{title}</h1>
       <div class="pa3 bt">
-        <ul className= 'list'>
+        <ul class='list pl0'>
           <li>{`Author: `}<span id={`authors/${authorId}`} className='underline pointer' onClick={itemClick}>{author}</span></li>
           <li>{`Category: `}<span id={`categories/${categoryId}`} className='underline pointer' onClick={itemClick}>{category}</span></li>
           <li>{`Words: ${words}`}</li>

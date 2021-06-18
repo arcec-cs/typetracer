@@ -15,6 +15,7 @@ class App extends Component {
     
     this.shouldFetch = false;
     this.cache = { }
+    this.listTitle = 'Texts';
 
     this.modalData={
       id: null,
@@ -66,24 +67,24 @@ class App extends Component {
   }
 
   onPathChange = (event) =>{
+    this.listTitle = event.currentTarget.innerHTML
     const path = event.currentTarget.id
-    console.log(path)
     this.setState({path: path})
   }
 
   onCloseModal = () => this.setState({isModalOpen: false});
   onTitleClick = (event) => {
-    console.log("onTitleClick")
     this.modalData.title = event.currentTarget.title;
     this.modalData.id = event.currentTarget.id;
     this.setState({isModalOpen: true});
   }
   render() {
     const display = this.getCurrentDisplay(); // conditionally render display acc this.
-   
+    const isTitleCardList = (this.state.path !== 'authors') && (this.state.path !=='categories');
     return (
-      <div name='CatalogContainer' className=''> 
+      <div name='CatalogContainer'> 
         <CatalogHeader onBrowseByClick = {this.onPathChange}/>
+        {isTitleCardList && <h1 className="f3 f2-l bold center mw5 mw6-l mt0">{this.listTitle}:</h1> }
         {display}
         <Modal open={this.state.isModalOpen} onClose={this.onCloseModal} center>
         <div className='tc pa3'>

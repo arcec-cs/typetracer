@@ -14,8 +14,8 @@ const BucketList = ({type, info, onItemClick}) => {
     </li>);
 
   return ( 
-  <article class="pa3 pa4-ns">
-    <h1 class="f3 f2-l bold center mw6 mw7-l">{header}</h1>
+  <article style={{paddingTop: '0'}} className="pa3 pa4-ns">
+    <h1 class="f3 f2-l bold center mw6 mw7-l mt0">{header}</h1>
     <ul class="list pl0 ml0 center mw6 mw7-l ba b--light-silver br2">
       {list}
     </ul>
