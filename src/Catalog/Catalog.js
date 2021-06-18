@@ -40,7 +40,7 @@ class App extends Component {
       fetch(`http://localhost:3005/catalog/${path}`)
       .then(res=> res.json())
       .then(data => this.cache[path] = JSON.stringify(data))
-      //.then(a => console.log(`Fetching: ${this.cache[path]}`))
+      .then(a => console.log(`Fetching: ${this.cache[path]}`))
       .then(a => this.shouldFetch = false)
       .then(a => this.setState({})) //re-render with fetched data
       .catch(error => console.log(error))
@@ -50,13 +50,13 @@ class App extends Component {
     //for api calls
     const loader = <span className='tc'><Loader type="ThreeDots" color="#000000" height={80} width={80} timeout={20000}/></span>;
     
-    //conditionally render content of the Catalog page based of browse state onTitleClick={} onBucketClick={} 
+    //conditionally render content of the Catalog page based of path state;  
     const path = this.state.path; 
     if(path.includes('/')) 
-      if(this.cache[`${path}`]) return <TitleCardList onTitleClick={this.onTitleClick}titleInfoArr={JSON.parse(this.cache[`${path}`])}/>;
+      if(this.cache[`${path}`]) return <TitleCardList onItemClick={this.onPathChange} onTitleClick={this.onTitleClick}titleInfoArr={JSON.parse(this.cache[`${path}`])}/>;
       else {this.shouldFetch = true; return loader}
     else if(path === 'titles') 
-      if(this.cache.titles) return <TitleCardList onTitleClick={this.onTitleClick} titleInfoArr={JSON.parse(this.cache.titles)}/>;//check this.cache for content
+      if(this.cache.titles) return <TitleCardList onItemClick={this.onPathChange} onTitleClick={this.onTitleClick} titleInfoArr={JSON.parse(this.cache.titles)}/>;//check this.cache for content
       else {this.shouldFetch = true; return loader}// if not fetch and indicate loading to user
     else if(path == 'authors')
       if (this.cache.authors) return <BucketList onItemClick={this.onPathChange} type='author' info={JSON.parse(this.cache.authors)}/>;
@@ -67,6 +67,7 @@ class App extends Component {
 
   onPathChange = (event) =>{
     const path = event.currentTarget.id
+    console.log(path)
     this.setState({path: path})
   }
 

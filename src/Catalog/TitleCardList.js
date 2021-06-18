@@ -1,6 +1,6 @@
 import React from 'react';
 import TitleCard from './TitleCard';
-const TitleCardList = ({titleInfoArr, onTitleClick}) => {
+const TitleCardList = ({titleInfoArr, onTitleClick, onItemClick}) => {
   return ( 
     titleInfoArr.map(titleInfo => 
       <TitleCard 
@@ -10,7 +10,10 @@ const TitleCardList = ({titleInfoArr, onTitleClick}) => {
         author={titleInfo.author} 
         category={titleInfo.category} 
         words={titleInfo.words}
-        titleClick={onTitleClick} 
+        authorId={titleInfo.author_id}
+        categoryId={titleInfo.category_id}
+        titleClick={onTitleClick}
+        itemClick={onItemClick} 
       />)
   );
 }
