@@ -9,14 +9,14 @@ const BucketList = ({type, info, onItemClick}) => {
      onClick={onItemClick} 
      id={`${pathFirst}/${entry['id']}`}
      key={`${entry['id']}`} 
-     class="f3-l ph3 pv3 bb b--light-silver underline pointer">
+     className='f3-l ph3 pv3 bb b--light-silver underline pointer'>
       {entry[type]}
     </li>);
 
   return ( 
-  <article style={{paddingTop: '0'}} className="pa3 pa4-ns">
-    <h1 class="f3 f2-l bold center mw6 mw7-l mt0">{header}</h1>
-    <ul class="list pl0 ml0 center mw6 mw7-l ba b--light-silver br2">
+  <article style={{paddingTop: '0'}} className='pa3 pa4-ns'>
+    <h1 className='f3 f2-l bold center mw6 mw7-l mt0'>{header}</h1>
+    <ul className='list pl0 ml0 center mw6 mw7-l ba b--light-silver br2'>
       {list}
     </ul>
   </article>
