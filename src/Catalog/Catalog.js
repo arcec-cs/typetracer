@@ -7,7 +7,7 @@ import Loader from "react-loader-spinner";
 import 'react-responsive-modal/styles.css';
 import { Modal } from 'react-responsive-modal';
 
-class App extends Component {
+class Catalog extends Component {
   constructor(props) { 
     super(props);
     
@@ -94,4 +94,4 @@ class App extends Component {
     );
   }
 }
- export default App;
+ export default Catalog;
