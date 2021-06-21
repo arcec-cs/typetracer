@@ -4,7 +4,7 @@ import TypeTracerApp from './TypeTracerApp/TypeTracerApp'
 import NavBar from './NavBar/NavBar.js'
 import Catalog from './Catalog/Catalog'
 import MyTexts from './MyTexts/MyTexts'
-
+import RegisterSignIn from './RegisterSignIn/RegisterSignIn'
 class App extends Component {
   constructor() { 
     super();
@@ -18,7 +18,8 @@ class App extends Component {
       {/* <LandingPage/> */}
       {/* <Catalog/> */}
       {/* <TypeTracerApp/> */}
-      <MyTexts/>
+      {/* <MyTexts/> */}
+      <RegisterSignIn/>
       </> 
     );
   }
