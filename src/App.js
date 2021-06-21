@@ -3,6 +3,8 @@ import LandingPage from './LandingPage/LandingPage'
 import TypeTracerApp from './TypeTracerApp/TypeTracerApp'
 import NavBar from './NavBar/NavBar.js'
 import Catalog from './Catalog/Catalog'
+import MyTexts from './MyTexts/MyTexts'
+
 class App extends Component {
   constructor() { 
     super();
@@ -14,8 +16,9 @@ class App extends Component {
       <> 
       <NavBar/>
       {/* <LandingPage/> */}
-      <Catalog/>
+      {/* <Catalog/> */}
       {/* <TypeTracerApp/> */}
+      <MyTexts/>
       </> 
     );
   }
