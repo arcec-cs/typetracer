@@ -11,12 +11,12 @@ class RegisterSignIn extends React.Component {
     };
 
     this.state={
-      isSignIn: true
+      isSignInForm: true
     };
   }
 
   onOtherFormClick = () => {
-    this.setState(state => ({isSignIn: !state.isSignIn})); //falisfy value
+    this.setState(state => ({isSignInForm: !state.isSignInForm})); //falisfy value
   }
 
   onEmailChange=(event)=>{
@@ -32,18 +32,45 @@ class RegisterSignIn extends React.Component {
     this.formInfo.name = event.currentTarget.value;
   }
 
+  onSubmit = () => {
+    const path = (this.state.isSignInForm) ? 'signIn' : 'register';
+    const body = {
+      email: this.formInfo.email,
+      password: this.formInfo.password,
+    }//add name for register
+    if (!this.state.isSignInForm) body.name = this.formInfo.name; 
+    fetch(`http://localhost:3005/${path}`, {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body)
+    })
+    .then(response => {
+      if(response.status === 200){
+        response.json().then(user => { //strings only in sessionStorage
+          sessionStorage.ttUser = JSON.stringify( {
+            uId: user.id,
+            name: user.name,
+            createdAt: user.created_at
+          });
+          this.props.registerOrSignIn(); //let App component know that we are SignedIn
+        })
+      }else { // notify user for failure
+        response.json().then(e => alert(e));
+      }
+    })
+  }
 
   render() {
-    console.log(this.state.isSignIn)
-    const thisForm = (this.state.isSignIn) ? 'Sign In' : 'Register';
-    const otherForm = (!this.state.isSignIn) ? 'Sign In' : 'Register';
+    console.log(this.state.isSignInForm)
+    const thisForm = (this.state.isSignInForm) ? 'Sign In' : 'Register';
+    const otherForm = (!this.state.isSignInForm) ? 'Sign In' : 'Register';
     return (
       <article className='br3 ba b--black-10 mv4 w-90 w-50-m w-40-l mw6 shadow-5 center'>
         <main className='pa4 black-80'>
           <div className='measure'>
             <fieldset className='ba b--transparent ph0 mh0'>
               <legend className='f1 fw6 ph0 mh0'>{`${thisForm}`}</legend>
-              {(!this.state.isSignIn) && 
+              {(!this.state.isSignInForm) && 
                 <div className='mt3'>
                   <label className='db fw7 lh-copy f6'>Name</label>
                   <input 
@@ -75,6 +102,7 @@ class RegisterSignIn extends React.Component {
                 className='b ph3 pv2 input-reset ba b--black white bg-black hover-bg-gray grow pointer f6 dib' 
                 type='submit' 
                 value={`${thisForm}`}
+                onClick={this.onSubmit}
               />
               <p onClick={this.onOtherFormClick} className=' underline f5 link dim black db pointer dib'>{`${otherForm}`}</p>
             </div>

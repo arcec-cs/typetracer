@@ -9,8 +9,12 @@ class App extends Component {
   constructor() { 
     super();
     this.state = { 
+      isSignedIn: false,
     }
   }
+
+  onRegisterOrSignIn = () => this.setState({isSignedIn: true})
+
   render() {
     return (
       <> 
@@ -19,7 +23,7 @@ class App extends Component {
       {/* <Catalog/> */}
       {/* <TypeTracerApp/> */}
       {/* <MyTexts/> */}
-      <RegisterSignIn/>
+      <RegisterSignIn registerOrSignIn={this.onRegisterOrSignIn}/>
       </> 
     );
   }
