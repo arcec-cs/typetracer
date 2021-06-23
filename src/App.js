@@ -16,25 +16,25 @@ class App extends Component {
 
   onRegisterOrSignIn = () => this.setState({isSignedIn: true})
 
-  onRouteChange = (route) => {this.setState({})}
+  onRouteChange = (route) => {console.log('click');this.setState({route: route})}
 
   render() {
     let page;
     switch (this.state.route) {
       case 'landingPage':
-        page = <LandingPage/>;
+        page = <LandingPage routeChange={this.onRouteChange}/>;
+        break;
+      case 'signin':
+        page = <RegisterSignIn routeChange={this.onRouteChange} registerOrSignIn={this.onRegisterOrSignIn}/>;
         break;
       case 'catalog':
-        page = <RegisterSignIn registerOrSignIn={this.onRegisterOrSignIn}/>;
-        break;
-      case 'catalog':
-        page = <Catalog/>;
+        page = <Catalog routeChange={this.onRouteChange}/>;
         break;
       case 'myTexts':
-        page = <MyTexts/>;
+        page = <MyTexts routeChange={this.onRouteChange}/>;
         break;
       case 'typeTracerApp':
-        page = <TypeTracerApp/>;
+        page = <TypeTracerApp routeChange={this.onRouteChange}/>;
         break;
     }
 

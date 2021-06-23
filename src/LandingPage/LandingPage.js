@@ -5,7 +5,7 @@ import signUp from './asset/signUp.svg'
 import bookList from './asset/bookList.js'
 import ReactRotatingText from 'react-rotating-text';
 
-const LandingPage = () => {
+const LandingPage = ({routeChange}) => {
   return (
       // 100vh so CardContainer occupy remaining viewport on s/m devices; minHeight so children dont overlap on horizontal resize for m display 
       <div name='PageContainer' style={{height:"100vh", minHeight:"25rem"}} className='flex flex-column items-center'>
@@ -22,13 +22,17 @@ const LandingPage = () => {
           flex-l flex-row-l justify-center-l 
         '`}>
           {/*Both cards same except Sign up has xtra margins: 1st line, could make Component to keep dry*/} 
-          <div name='CardSignUp' className={`'
+          <div 
+            name='CardSignUp' 
+            className={`'
             max-mr-10-l mb4-m  
             flex justify-between min-h6 pa-3 bg-black br3 ba shadow-5 b--black-10 
             justify-around-m min-h10-m mw-7h-m
             h-35-nl mh3-nl
             flex-column-l justify-center-l min-h20-l w-45-l h-auto-l mv-4-l mw8 grow-l pointer-l hover-bg-gray-l
-          '`}>
+          '`}
+            onClick={() => routeChange('signin')}
+          >
             <div className='flex flex-column justify-around items-center tc ma2 ml1'>
               <h5 className='f5 f4-m f3-l mb2 mb3-m mt0 mb4-l white'>{'Sign up to save progress:'}</h5>
               <button className='f6 grow no-underline br-pill ph3 ph4-m pv3 mb2 black b bg-white hover-bg-red pointer dn-l'>
@@ -38,12 +42,16 @@ const LandingPage = () => {
             <img className='ma2 mr1 mw4 mw5-m mw-100-l h-75-l' src={signUp} 
             alt={'Person saving their TypeTracer progress by Signing Up'}/>
           </div>
-          <div name='CardCatalog' className={`'
+          <div 
+            name='CardCatalog' 
+            className={`'
             flex justify-between min-h6 pa-3 bg-black br3 ba shadow-5 b--black-10 
             justify-around-m min-h10-m mw-7h-m
             h-35-nl mh3-nl
             flex-column-l justify-center-l min-h20-l w-45-l h-auto-l mv-4-l mw8 grow-l pointer-l hover-bg-gray-l 
-          '`}>
+          '`}
+            onClick={() => routeChange('catalog')}
+          >
             <div className='flex flex-column justify-around items-center ma2 ml1'>
               <h5 className='f5 f4-m f3-l tc mb2 mb3-m mb4-l mt0 white'>{'Check out our catalog:'}</h5>
               <button className='f6 grow no-underline tc br-pill ph3 ph4-m pv3 mb2 black b bg-white hover-bg-red pointer dn-l'>
