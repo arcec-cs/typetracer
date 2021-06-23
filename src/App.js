@@ -16,7 +16,9 @@ class App extends Component {
 
   onRegisterOrSignIn = () => this.setState({isSignedIn: true})
 
-  onRouteChange = (route) => {console.log('click');this.setState({route: route})}
+  onRouteChange = (route) => {this.setState({route: route})}
+
+  onSignOut = () => {this.setState({isSignedIn: false}); sessionStorage.removeItem('ttUser')}
 
   render() {
     let page;
@@ -40,7 +42,11 @@ class App extends Component {
 
     return (
       <> 
-        <NavBar/>
+        <NavBar 
+        routeChange={this.onRouteChange} 
+        signedIn={this.state.isSignedIn} 
+        signOut={this.onSignOut}
+        />
         {page}
       </> 
     );
