@@ -87,7 +87,16 @@ class Catalog extends Component {
         <div className='tc pa3'>
           <h2>{'Start TypeTracing:'}</h2>
           <h3 className='mb5 grow'>{this.modalData.title}</h3>
-          <button style={{outline: 'none'}} className='f5 tc br-pill ph4 pv3 mb2 dib white bg-black bn pointer'>Button Text</button> {/*route to TypeTracerApplication page*/}
+          <button 
+          style={{outline: 'none'}} 
+          className='f5 tc br-pill ph4 pv3 mb2 dib white bg-black bn pointer'
+          onClick={() => {
+            this.props.routeChange('typeTracerApp');
+            sessionStorage.ttApp = JSON.stringify({textId: this.modalData.id})//so we know which text to fetch in ttApp
+          }}
+          >
+            {'To Typetracer App'}
+          </button> {/*route to TypeTracerApplication page*/}
         </div>
        </Modal>
       </div> 

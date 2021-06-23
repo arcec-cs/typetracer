@@ -45,7 +45,7 @@ const NavBar = ({routeChange, signedIn, signOut, menuIsOpen, menuStateChange, cl
         style={{outline: 'none'}} 
         className='link hover-red f4 fw6 db white mb4 pointer'
         onClick={() => {
-          routeChange('catalog'); 
+          routeChange('myTexts'); 
           closeMenu();
         }}
         >
