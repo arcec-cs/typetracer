@@ -10,20 +10,38 @@ class App extends Component {
     super();
     this.state = { 
       isSignedIn: false,
+      route:'landingPage'
     }
   }
 
   onRegisterOrSignIn = () => this.setState({isSignedIn: true})
 
+  onRouteChange = (route) => {this.setState({})}
+
   render() {
+    let page;
+    switch (this.state.route) {
+      case 'landingPage':
+        page = <LandingPage/>;
+        break;
+      case 'catalog':
+        page = <RegisterSignIn registerOrSignIn={this.onRegisterOrSignIn}/>;
+        break;
+      case 'catalog':
+        page = <Catalog/>;
+        break;
+      case 'myTexts':
+        page = <MyTexts/>;
+        break;
+      case 'typeTracerApp':
+        page = <TypeTracerApp/>;
+        break;
+    }
+
     return (
       <> 
-      <NavBar/>
-      {/* <LandingPage/> */}
-      {/* <Catalog/> */}
-      {/* <TypeTracerApp/> */}
-      {/* <MyTexts/> */}
-      <RegisterSignIn registerOrSignIn={this.onRegisterOrSignIn}/>
+        <NavBar/>
+        {page}
       </> 
     );
   }
