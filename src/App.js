@@ -43,6 +43,8 @@ class App extends Component {
       case 'typeTracerApp':
         page = <TypeTracerApp routeChange={this.onRouteChange}/>;
         break;
+      default:
+        page = <LandingPage routeChange={this.onRouteChange}/>;
     }
 
     return (

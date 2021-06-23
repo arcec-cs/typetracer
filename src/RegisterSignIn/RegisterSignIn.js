@@ -53,6 +53,7 @@ class RegisterSignIn extends React.Component {
             createdAt: user.created_at
           });
           this.props.registerOrSignIn(); //let App component know that we are SignedIn
+          this.props.routeChange('myTexts');
         })
       }else { // notify user for failure
         response.json().then(e => alert(e));
