@@ -10,15 +10,20 @@ class App extends Component {
     super();
     this.state = { 
       isSignedIn: false,
-      route:'landingPage'
+      route:'landingPage',
+      isMenuOpen: false
     }
   }
 
   onRegisterOrSignIn = () => this.setState({isSignedIn: true})
 
-  onRouteChange = (route) => {this.setState({route: route})}
+  onRouteChange = (route) => this.setState({route: route})
 
   onSignOut = () => {this.setState({isSignedIn: false}); sessionStorage.removeItem('ttUser')}
+
+  onMenuStateChange = (state) => this.setState({isMenuOpen: state.isOpen})//part of documentation 
+  closeMenu = () => this.setState({isMenuOpen: false})
+  
 
   render() {
     let page;
@@ -46,6 +51,9 @@ class App extends Component {
         routeChange={this.onRouteChange} 
         signedIn={this.state.isSignedIn} 
         signOut={this.onSignOut}
+        menuIsOpen={this.state.isMenuOpen}
+        menuStateChange={this.onMenuStateChange}
+        closeMenu={this.closeMenu}
         />
         {page}
       </> 
