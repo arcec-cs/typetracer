@@ -1,11 +1,18 @@
 import React from "react";
 import './LandingPage.css'
 import catalog from './asset/catalog.svg'
-import signUp from './asset/signUp.svg'
+import signIn from './asset/signIn.svg'
 import bookList from './asset/bookList.js'
 import ReactRotatingText from 'react-rotating-text';
 
 const LandingPage = ({routeChange}) => {
+
+  const isCardClickable = () => { //card is only clickable when it is large min w 60em. rem is used for sizing in Tachyons. 
+    let computedRemSize = window.getComputedStyle(document.getElementsByTagName("HTML")[0]).fontSize;//rem dependent on browsers so compute
+    computedRemSize = computedRemSize.slice(0,2) // get rid of px
+    return (computedRemSize * 60 <= window.innerWidth) //return if screen is currently large
+  }
+  
   return (
       // 100vh so CardContainer occupy remaining viewport on s/m devices; minHeight so children dont overlap on horizontal resize for m display 
       <div name='PageContainer' style={{height:"100vh", minHeight:"25rem"}} className='flex flex-column items-center'>
@@ -31,15 +38,18 @@ const LandingPage = ({routeChange}) => {
             h-35-nl mh3-nl
             flex-column-l justify-center-l min-h20-l w-45-l h-auto-l mv-4-l mw8 grow-l pointer-l hover-bg-gray-l
           '`}
-            onClick={() => routeChange('signin')}
+            onClick={() => (isCardClickable()) && routeChange('signin')}
           >
             <div className='flex flex-column justify-around items-center tc ma2 ml1'>
               <h5 className='f5 f4-m f3-l mb2 mb3-m mt0 mb4-l white'>{'Sign up to save progress:'}</h5>
-              <button className='f6 grow no-underline br-pill ph3 ph4-m pv3 mb2 black b bg-white hover-bg-red pointer dn-l'>
-                {'Sign Up'}
+              <button 
+              className='f6 grow no-underline br-pill ph3 ph4-m pv3 mb2 black b bg-white hover-bg-red pointer dn-l'
+              onClick={() => routeChange('signin')}
+              >
+                {'Sign In'}
               </button>
             </div>
-            <img className='ma2 mr1 mw4 mw5-m mw-100-l h-75-l' src={signUp} 
+            <img className='white tc ma2 mr1 mw4 mw5-m mw-100-l h-75-l' src={signIn} 
             alt={'Person saving their TypeTracer progress by Signing Up'}/>
           </div>
           <div 
@@ -50,15 +60,19 @@ const LandingPage = ({routeChange}) => {
             h-35-nl mh3-nl
             flex-column-l justify-center-l min-h20-l w-45-l h-auto-l mv-4-l mw8 grow-l pointer-l hover-bg-gray-l 
           '`}
-            onClick={() => routeChange('catalog')}
+            onClick={() => (isCardClickable()) && routeChange('catalog')}
           >
             <div className='flex flex-column justify-around items-center ma2 ml1'>
               <h5 className='f5 f4-m f3-l tc mb2 mb3-m mb4-l mt0 white'>{'Check out our catalog:'}</h5>
-              <button className='f6 grow no-underline tc br-pill ph3 ph4-m pv3 mb2 black b bg-white hover-bg-red pointer dn-l'>
+              <button 
+              className='f6 grow no-underline tc br-pill ph3 ph4-m pv3 mb2 black b bg-white hover-bg-red pointer dn-l'
+              onClick={() =>  routeChange('catalog')}
+              >
                 {'Our Catalog'}
               </button>
             </div>
-            <img className='mw5-m mw-100-l h-75-l ma2 mr1' src={catalog} alt={'Person browsing books in TypeTracer\'s catalog'}/>
+            <img className='white tc mw5-m mw-100-l h-75-l ma2 mr1' src={catalog} 
+            alt={'Person browsing books in TypeTracer\'s catalog'}/>
           </div>
         </section>
       </div>
