@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import fetchedText from './temp/ink-text2600.json' //locally loaded, will be fetched in production
 import './TypeTracerApp.css';
 import Page from './Page/Page'
 import InputBar from './InputBar/InputBar'
@@ -11,11 +10,15 @@ class TypeTracerApp extends Component {
     //user id and text id used for api calls
     this.uId = null;
     this.tId = undefined;
+
+    //update progress states
+    this.progressTimerId = undefined;
+    this.progressLastSent = undefined;  
     
     //have to load text from AWS 3S /TypeTracerDB 
     this.text = {}; //holds paginated book
     this.furthestIndexStore = {page: 1, para: 0, sen: 0, c_start: 0} //keeps track of furthest progress, fetched from Ttracer db
-
+     
     //states used to manipulate page
     this.textOnPage = []; //will consist of already typed text and text the user is typing
     this.indexer = {page: 1, para: 0, sen: 0, c_start: 0}; //keeps track of typing postion in book
@@ -26,8 +29,12 @@ class TypeTracerApp extends Component {
     };
   }
 
-  componentDidMount(){ 
+  componentDidMount(){   
     this.initTypeTracer();
+  }
+
+  componentWillUnmount(){
+    clearInterval(this.progressTimerId); //clean up
   }
 
   async initTypeTracer() {
@@ -45,6 +52,20 @@ class TypeTracerApp extends Component {
     .then(res=> res.json()) //returns {progress:{progressProps...}}
     //.then(progress => progress.progress) // only get {progressProps...}
     .catch(error => console.log(error));
+
+    const setUpdateProgressInterval = () => { //Updates progress at an interval if progress was made
+      const options = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json'},
+      };
+      this.progressTimerId = setInterval(() => { 
+        if(JSON.stringify(this.furthestIndexStore) !== JSON.stringify(this.progressLastSent)) {
+          this.progressLastSent =  Object.assign({}, this.furthestIndexStore);
+          options.body =  JSON.stringify({progress: this.furthestIndexStore})
+          fetch(`http://localhost:3005/myTexts/${this.uId}/progress/${this.tId}`, options)
+        }
+      }, 15000); 
+    }
     
     //set uId/tId from local storage. uId will remain null if not signedIn
     if(sessionStorage.ttUser) this.uId = JSON.parse(sessionStorage.ttUser).uId ;
@@ -67,6 +88,7 @@ class TypeTracerApp extends Component {
         this.furthestIndexStore = await fetchProgress()
         this.indexer = Object.assign({}, this.furthestIndexStore) 
       }
+      setUpdateProgressInterval(); //set interval to update logged in user progress in the backend
     }else {//NOT Logged In
       if(!localStorage[`ttText${this.tId}`]) {this.text = await fetchAndStoreText(); console.log(`NOT logged In  NOT in local storage`)} //NOT in local storage 
       else {this.text = JSON.parse(localStorage[`ttText${this.tId}`]); console.log("NOT logged In in local storage")};//in local storage
