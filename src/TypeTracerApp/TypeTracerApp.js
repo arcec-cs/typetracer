@@ -7,6 +7,10 @@ import InputBar from './InputBar/InputBar'
 class TypeTracerApp extends Component {
   constructor(props) {
     super(props);
+
+    //user id and text id used for api calls
+    this.uId = null;
+    this.tId = undefined;
     
     //have to load text from AWS 3S /TypeTracerDB 
     this.text = {}; //holds paginated book
@@ -22,13 +26,54 @@ class TypeTracerApp extends Component {
     };
   }
 
-  componentDidMount(){ let test =
-    //make network request here to fetch data from s3/TypeTracer db
-    this.text = fetchedText; //Book text fetched form S3
-    this.furthestIndexStore = {page: 5, para: 4, sen: 0, c_start: 0 }//fetched from TT db
-    this.indexer = Object.assign({}, this.furthestIndexStore) // users starts at lastest progress
-    this.furthestPageBuilder(); // build furthest page
-    this.setState({}); //to get to re-render for 
+  componentDidMount(){ 
+    this.initTypeTracer();
+  }
+
+  async initTypeTracer() {
+    const fetchAndStoreText = () => 
+    fetch(`http://localhost:3005/text/${this.tId}`)
+    .then(res=> res.json())//maybe change to .text() so neo need to restringify?
+    .then(text => {
+      localStorage[`ttText${this.tId}`] = text;// store here so we dont have to restringify
+      return JSON.parse(text);
+    })// set text
+    .catch(error => console.log(error));
+  
+    const fetchProgress = () => 
+    fetch(`http://localhost:3005/myTexts/${this.uId}/progress/${this.tId}`)
+    .then(res=> res.json()) //returns {progress:{progressProps...}}
+    //.then(progress => progress.progress) // only get {progressProps...}
+    .catch(error => console.log(error));
+    
+    //set uId/tId from local storage. uId will remain null if not signedIn
+    if(sessionStorage.ttUser) this.uId = JSON.parse(sessionStorage.ttUser).uId ;
+    this.tId = JSON.parse(sessionStorage.ttApp).textId; //will always have a tId
+    
+    //Check isLoggedIn - fetchProgress; Check isTextInLocalStorage- fetchText; 
+    if(this.uId) {//Logged in
+      if(!localStorage[`ttText${this.tId}`]) { //NOT in local storage 
+      console.log("logged in NOT in local storage")
+      //fetch in parallel
+      const promises = [fetchAndStoreText(), fetchProgress()]; 
+      const [text, progress] = await Promise.all(promises);
+      //set text and progress
+      this.text = text;
+      this.furthestIndexStore = progress
+      this.indexer = Object.assign({}, this.furthestIndexStore)
+      } else { //In local storage
+        console.log("logged In in local storage")
+        this.text = JSON.parse(localStorage[`ttText${this.tId}`]);
+        this.furthestIndexStore = await fetchProgress()
+        this.indexer = Object.assign({}, this.furthestIndexStore) 
+      }
+    }else {//NOT Logged In
+      if(!localStorage[`ttText${this.tId}`]) {this.text = await fetchAndStoreText(); console.log(`NOT logged In  NOT in local storage`)} //NOT in local storage 
+      else {this.text = JSON.parse(localStorage[`ttText${this.tId}`]); console.log("NOT logged In in local storage")};//in local storage
+    }
+    //Build Current page and render it
+    this.furthestPageBuilder();
+    this.setState({}); //to get to re-render with initState
   }
 
   onTextInputChange = (event) => { //pubclassfeild syntax sets on method instance/ normal func on prototype
@@ -151,8 +196,8 @@ class TypeTracerApp extends Component {
 
   render() {
     const indexer = this.indexer;
-    console.log(indexer)
-    console.log(this.furthestIndexStore) 
+    // console.log(indexer)
+    // console.log(this.furthestIndexStore) 
     //console.log(`text: ${this.textOnPage} isC: ${this.isInputCorrect} para: ${indexer.para} sen: ${indexer.sen} charS: ${indexer.c_start} charE: ${indexer.c_start + this.state.textInput.length}`)  
     return (
       <div className = 'vh-100 flex justify-center'>
