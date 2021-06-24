@@ -66,6 +66,9 @@ class TypeTracerApp extends Component {
         }
       }, 15000); 
     }
+
+    const addToMyTexts = () => //Makes Record, do here to ensure sequence between record making and progress fetching, progress in record. 
+    fetch(`http://localhost:3005/myTexts/${this.uId}/${this.tId}`, {method: 'POST'});
     
     //set uId/tId from local storage. uId will remain null if not signedIn
     if(sessionStorage.ttUser) this.uId = JSON.parse(sessionStorage.ttUser).uId ;
@@ -73,6 +76,7 @@ class TypeTracerApp extends Component {
     
     //Check isLoggedIn - fetchProgress; Check isTextInLocalStorage- fetchText; 
     if(this.uId) {//Logged in
+      if(!sessionStorage.myTextsIndex[this.tid]) await addToMyTexts();
       if(!localStorage[`ttText${this.tId}`]) { //NOT in local storage 
       console.log("logged in NOT in local storage")
       //fetch in parallel

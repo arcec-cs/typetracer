@@ -35,7 +35,7 @@ class App extends Component {
         page = <RegisterSignIn routeChange={this.onRouteChange} registerOrSignIn={this.onRegisterOrSignIn}/>;
         break;
       case 'catalog':
-        page = <Catalog routeChange={this.onRouteChange}/>;
+        page = <Catalog signedIn={this.state.isSignedIn} routeChange={this.onRouteChange}/>;
         break;
       case 'myTexts':
         page = <MyTexts routeChange={this.onRouteChange}/>;
