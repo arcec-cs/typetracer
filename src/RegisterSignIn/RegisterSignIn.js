@@ -1,4 +1,5 @@
 import React from 'react';
+import jwt from 'jsonwebtoken'
 
 class RegisterSignIn extends React.Component {
   constructor(props) {
@@ -47,11 +48,18 @@ class RegisterSignIn extends React.Component {
     .then(response => {
       if(response.status === 200){
         response.json().then(user => { //strings only in sessionStorage
+          const accessToken = user.accessToken;
+          const payload = jwt.decode(accessToken)
+          // set in session storage
           sessionStorage.ttUser = JSON.stringify( {
-            uId: user.id,
-            name: user.name,
-            createdAt: user.created_at
+            uId: payload.user.id,
+            name: payload.user.name,
+            createdAt: payload.user.created_at,
           });
+          sessionStorage.accessTokenInfo = JSON.stringify({
+            accessToken: accessToken,
+            expires:payload.exp
+          })
           this.props.registerOrSignIn(); //let App component know that we are SignedIn
           this.props.routeChange('myTexts');
         })
