@@ -11,15 +11,29 @@ class App extends Component {
     this.state = { 
       isSignedIn: false,
       route:'landingPage',
-      isMenuOpen: false
+      isMenuOpen: false,
+      accessModal: false,
     }
   }
 
-  onRegisterOrSignIn = () => this.setState({isSignedIn: true})
+  onComponentWillMount() {
+    if(!sessionStorage.ttUser) { //Handles keeping signed in state true upon reload
+      const isAccessTokenValid = (JSON.parse(sessionStorage.ttuser).accessTokenInfo.expires > Math.floor(Date.now() / 1000));
+      if (isAccessTokenValid) this.setState({isSignedIn: true});
+    }
+  }
 
-  onRouteChange = (route) => this.setState({route: route})
+  onRegisterOrSignIn = () => this.setState({isSignedIn: true});
 
-  onSignOut = () => {this.setState({isSignedIn: false}); sessionStorage.removeItem('ttUser')}
+  onRouteChange = (route) => this.setState({route: route}); //need to have session storage route for reloads
+
+  onSignOut = () => {
+    const ttUser = JSON.parse(sessionStorage.ttUser);//get from session storage
+    clearTimeout(ttUser.accessTimers.accessEnd);
+    clearTimeout(ttUser.accessTimers.accessWarning);
+    this.setState({isSignedIn: false, route:'landingPage'}); 
+    sessionStorage.removeItem('ttUser');
+  }
 
   onMenuStateChange = (state) => this.setState({isMenuOpen: state.isOpen})//part of documentation 
   closeMenu = () => this.setState({isMenuOpen: false})
@@ -32,7 +46,7 @@ class App extends Component {
         page = <LandingPage routeChange={this.onRouteChange}/>;
         break;
       case 'signin':
-        page = <RegisterSignIn routeChange={this.onRouteChange} registerOrSignIn={this.onRegisterOrSignIn}/>;
+        page = <RegisterSignIn routeChange={this.onRouteChange} registerOrSignIn={this.onRegisterOrSignIn} signOut={this.onSignOut}/>;
         break;
       case 'catalog':
         page = <Catalog signedIn={this.state.isSignedIn} routeChange={this.onRouteChange}/>;

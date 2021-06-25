@@ -35,31 +35,21 @@ class RegisterSignIn extends React.Component {
 
   onSubmit = () => {
     const path = (this.state.isSignInForm) ? 'signIn' : 'register';
+    //set body
     const body = {
       email: this.formInfo.email,
       password: this.formInfo.password,
-    }//add name for register
-    if (!this.state.isSignInForm) body.name = this.formInfo.name; 
-    fetch(`http://localhost:3005/${path}`, {
+    }
+    if (!this.state.isSignInForm) body.name = this.formInfo.name; // register form
+    fetch(`http://localhost:3005/${path}`, { //fetch jwt token
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(body)
     })
     .then(response => {
-      if(response.status === 200){
-        response.json().then(user => { //strings only in sessionStorage
-          const accessToken = user.accessToken;
-          const payload = jwt.decode(accessToken)
-          // set in session storage
-          sessionStorage.ttUser = JSON.stringify( {
-            uId: payload.user.id,
-            name: payload.user.name,
-            createdAt: payload.user.created_at,
-          });
-          sessionStorage.accessTokenInfo = JSON.stringify({
-            accessToken: accessToken,
-            expires:payload.exp
-          })
+      if(response.status === 200){ //if success
+        response.json().then(resObj => { //get access token, extract payload, set sessionStorage
+          this.accessTokenHandler(resObj);
           this.props.registerOrSignIn(); //let App component know that we are SignedIn
           this.props.routeChange('myTexts');
         })
@@ -67,6 +57,34 @@ class RegisterSignIn extends React.Component {
         response.json().then(e => alert(e));
       }
     })
+  }
+
+  accessTokenHandler(resObj) {
+    //get acces token data
+    const accessToken = resObj.accessToken;
+    const payload = jwt.decode(accessToken)
+    console.log("P", payload)
+    const accessTokenExpTime = (payload.exp * 1000 - Date.now());
+    const accessTokenExpWarningTime = accessTokenExpTime - 5000; //give a warining about logout 
+    //set in session storage
+    sessionStorage.ttUser = JSON.stringify({
+      uId: payload.user.id,
+      name: payload.user.name,
+      createdAt: payload.user.created_at,
+      accessTokenInfo:{
+        accessToken: accessToken,
+        expires:payload.exp
+      },
+      accessTimers: { //Only Access Tokens and not Refresh Tokens have been implmented; Inform User
+        accessEnd: setTimeout(()=> {
+          alert("Your Session has ended :( Please Re-SignIn if you wish to continue")  
+          this.props.signOut(); //Sign user out since Access token has expired          
+          }, accessTokenExpTime),
+        accessWarning: setTimeout(()=> {
+          alert("Your Session will end in 5 Minutes, Please Sign Out then Sign In to Renew your session :)");
+        }, accessTokenExpWarningTime)
+      }
+    });
   }
 
   render() {
