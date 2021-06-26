@@ -10,7 +10,6 @@ class MyTexts extends Component {
   constructor(props) { 
     super(props);
     
-    this.uIdTemp = 1;// TEMP UID until login is implemented
     this.myTextsList = null; //store texts list
  
     this.modalData={ // store to display title on modal
@@ -30,7 +29,10 @@ class MyTexts extends Component {
   }  
 
   fetchAndStoreMyTexts(){
-    fetch(`http://localhost:3005/myTexts/${this.uIdTemp}`)
+    const userInfo = JSON.parse(sessionStorage.ttUser)
+    const token = userInfo.accessTokenInfo.accessToken;
+    const uId = userInfo.uId;
+    fetch(`http://localhost:3005/myTexts/${uId}`, {headers:{'Authorization': `bearer ${token}`}})
     .then(res=> res.json())
     .then(data => {
       //Store to check if record must be created for users can also start ttApp from catalog; send to task queue, not urgent
