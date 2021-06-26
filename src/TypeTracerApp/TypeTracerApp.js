@@ -7,10 +7,6 @@ class TypeTracerApp extends Component {
   constructor(props) {
     super(props);
 
-    //user id and text id used for api calls
-    this.uId = null;
-    this.tId = undefined;
-
     //update progress states
     this.progressTimerId = undefined;
     this.progressLastSent = undefined;  
@@ -38,46 +34,52 @@ class TypeTracerApp extends Component {
   }
 
   async initTypeTracer() {
+    //set tId, and set uId and token if logged in
+    let tId = JSON.parse(sessionStorage.ttApp).textId; //will always have a tId
+    let uId, token;
+    if(sessionStorage.ttUser) {
+      uId = JSON.parse(sessionStorage.ttUser).uId;
+      token = JSON.parse(sessionStorage.ttUser).accessTokenInfo.accessToken;
+    }
+    
     const fetchAndStoreText = () => 
-    fetch(`http://localhost:3005/text/${this.tId}`)
+    fetch(`http://localhost:3005/text/${tId}`)
     .then(res=> res.json())//maybe change to .text() so neo need to restringify?
     .then(text => {
-      localStorage[`ttText${this.tId}`] = text;// store here so we dont have to restringify
+      localStorage[`ttText${tId}`] = text;// store here so we dont have to restringify
       return JSON.parse(text);
     })// set text
     .catch(error => console.log(error));
   
     const fetchProgress = () => 
-    fetch(`http://localhost:3005/myTexts/${this.uId}/progress/${this.tId}`)
-    .then(res=> res.json()) //returns {progress:{progressProps...}}
-    //.then(progress => progress.progress) // only get {progressProps...}
+    fetch(`http://localhost:3005/myTexts/${uId}/progress/${tId}`, {headers:{'Authorization': `bearer ${token}`}})
+    .then(res=> res.json()) // ret progress index
     .catch(error => console.log(error));
-
+    
     const setUpdateProgressInterval = () => { //Updates progress at an interval if progress was made
       const options = {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json'},
+        headers: {
+          'Authorization': `bearer ${token}`,
+          'Content-Type' : 'application/json' 
+        },
       };
       this.progressTimerId = setInterval(() => { 
         if(JSON.stringify(this.furthestIndexStore) !== JSON.stringify(this.progressLastSent)) {
           this.progressLastSent =  Object.assign({}, this.furthestIndexStore);
           options.body =  JSON.stringify({progress: this.furthestIndexStore})
-          fetch(`http://localhost:3005/myTexts/${this.uId}/progress/${this.tId}`, options)
+          fetch(`http://localhost:3005/myTexts/${uId}/progress/${tId}`, options)
         }
       }, 15000); 
     }
 
     const addToMyTexts = () => //Makes Record, do here to ensure sequence between record making and progress fetching, progress in record. 
-    fetch(`http://localhost:3005/myTexts/${this.uId}/${this.tId}`, {method: 'POST'});
-    
-    //set uId/tId from local storage. uId will remain null if not signedIn
-    if(sessionStorage.ttUser) this.uId = JSON.parse(sessionStorage.ttUser).uId ;
-    this.tId = JSON.parse(sessionStorage.ttApp).textId; //will always have a tId
+    fetch(`http://localhost:3005/myTexts/${uId}/${tId}`, {method: 'POST', headers:{'Authorization': `bearer ${token}`}});
     
     //Check isLoggedIn - fetchProgress; Check isTextInLocalStorage- fetchText; 
-    if(this.uId) {//Logged in
-      if(!sessionStorage.myTextsIndex[this.tid]) await addToMyTexts();
-      if(!localStorage[`ttText${this.tId}`]) { //NOT in local storage 
+    if(uId) {//Logged in
+      if(!JSON.parse(sessionStorage.myTextsIndex)[tId]) await addToMyTexts();
+      if(!localStorage[`ttText${tId}`]) { //NOT in local storage 
       console.log("logged in NOT in local storage")
       //fetch in parallel
       const promises = [fetchAndStoreText(), fetchProgress()]; 
@@ -88,14 +90,14 @@ class TypeTracerApp extends Component {
       this.indexer = Object.assign({}, this.furthestIndexStore)
       } else { //In local storage
         console.log("logged In in local storage")
-        this.text = JSON.parse(localStorage[`ttText${this.tId}`]);
+        this.text = JSON.parse(localStorage[`ttText${tId}`]);
         this.furthestIndexStore = await fetchProgress()
-        this.indexer = Object.assign({}, this.furthestIndexStore) 
+        this.indexer = Object.assign({}, this.furthestIndexStore)
       }
       setUpdateProgressInterval(); //set interval to update logged in user progress in the backend
     }else {//NOT Logged In
-      if(!localStorage[`ttText${this.tId}`]) {this.text = await fetchAndStoreText(); console.log(`NOT logged In  NOT in local storage`)} //NOT in local storage 
-      else {this.text = JSON.parse(localStorage[`ttText${this.tId}`]); console.log("NOT logged In in local storage")};//in local storage
+      if(!localStorage[`ttText${tId}`]) {this.text = await fetchAndStoreText(); console.log(`NOT logged In  NOT in local storage`)} //NOT in local storage 
+      else {this.text = JSON.parse(localStorage[`ttText${tId}`]); console.log("NOT logged In in local storage")};//in local storage
     }
     //Build Current page and render it
     this.furthestPageBuilder();
