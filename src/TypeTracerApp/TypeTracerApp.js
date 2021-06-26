@@ -7,8 +7,11 @@ class TypeTracerApp extends Component {
   constructor(props) {
     super(props);
 
-    //made state to update progress
-    this.tId = this.uId = this.token = undefined;
+    //used on login/not login. tId made state for onSaveProgress
+    this.tId = this.title = undefined
+
+    //needed when logged in/ made state for onSaveProgress
+     this.uId = this.token = undefined;
 
     //update progress states
     this.progressTimerId = undefined;
@@ -37,8 +40,11 @@ class TypeTracerApp extends Component {
   }
 
   async initTypeTracer() {
-    //set this.tId, and set this.uId and this.token if logged in
-    const tId = this.tId = JSON.parse(sessionStorage.ttApp).textId; //will always have a this.tId
+    //get id and title of text selected
+    const textSelected = JSON.parse(sessionStorage.ttTextSelected);
+    const tId = this.tId = textSelected.id;
+    this.title = textSelected.title//.slice(0,25) + '...';
+    //set this.uId and this.token if logged in
     let uId, token;
     if(sessionStorage.ttUser) {
        uId = this.uId = JSON.parse(sessionStorage.ttUser).uId;
@@ -243,7 +249,7 @@ class TypeTracerApp extends Component {
       <div className = 'h-navOffset flex justify-center'>
         <div className='ma2 w-custom w-custom-m w-custom-l'>
           <div name ='topBar' className='flex justify-between'>
-            <span>{'Placeholder title'}</span>
+            <span className='i fw3'>{`${this.title}`}</span>
             <span>{'# NUMBER'}  <button onClick={this.onProgressSave}>{'save'}</button></span>
           </div>
           <Page 

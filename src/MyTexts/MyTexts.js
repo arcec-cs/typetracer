@@ -75,7 +75,8 @@ class MyTexts extends Component {
             className='f5 tc br-pill ph4 pv3 mb2 dib white bg-black bn pointer'
             onClick={() => {
               this.props.routeChange('typeTracerApp');
-              sessionStorage.ttApp = JSON.stringify({textId: this.modalData.id})//so we know which text to fetch in ttApp
+              //id so we know which text to fetch in ttApp
+              sessionStorage.ttTextSelected = JSON.stringify({id: this.modalData.id, title: this.modalData.title})
             }}
             >
               {'To Typetracer App'}
