@@ -101,6 +101,7 @@ class TypeTracerApp extends Component {
     }
     //Build Current page and render it
     this.furthestPageBuilder();
+    console.log(this.textOnPage)
     this.setState({}); //to get to re-render with initState
   }
 
@@ -113,7 +114,7 @@ class TypeTracerApp extends Component {
     const isInputCorrect = userInput == expectedInput; 
 
     this.isInputCorrect = isInputCorrect;//passed down to set styles on current word being typed
-    console.log(`userInput: ${userInput} | expectedInput  ${expectedInput} ; isCorrect: ${isInputCorrect}`);
+    //console.log(`userInput: ${userInput} | expectedInput  ${expectedInput} ; isCorrect: ${isInputCorrect}`);
     (isInputCorrect && this.isEndOfWord(userInput)) ? this.nextWord(userInput)
     : this.setState({textInput: userInput});
   }
@@ -140,9 +141,10 @@ class TypeTracerApp extends Component {
     //index markers
     const indexEOSen = text[indexer.page][indexer.para][indexer.sen].length - 1;
     const isEOSen = (indexer.c_start > indexEOSen); // c_start was indexed past sentence bounds of the sentence
-    console.log(`page: ${indexer.page} para:${indexer.para} sen:${indexer.sen} `)
+    //console.log(`page: ${indexer.page} para:${indexer.para} sen:${indexer.sen} `)
     //if End Of significant text, figure out which case and set this.indexer/ add to textOnPage
     if(isEOSen) { 
+      
       //EO index markers 
       const indexEOPara = text[indexer.page][indexer.para].length - 1; 
       const indexEOPage = text[indexer.page].length -1;
@@ -152,29 +154,33 @@ class TypeTracerApp extends Component {
       
       //Check Cases: we always set indexes, if on furthest page we also append to the page.
       if(!isEOPara) { //end of sentence in a paragraph but not the last one
+        //console.log("EOS")
         indexer.sen = indexer.sen + 1; //increment EO
         //reset indexes
         indexer.c_start = 0; 
         //If Furthest, Append Sen: next sentence of para
         if(indexer.page == fIndex.page) {
           this.textOnPage[indexer.para].push(this.text[indexer.page][indexer.para][indexer.sen]);
+          fIndex.c_start = 0
           fIndex.sen = indexer.sen; 
         }
       } 
       else if(isEOPara && !isEOPage) { //at last sentence in paragraph
+        //console.log("EOPara")
         indexer.para = indexer.para + 1; //increment EO 
         //reset indexes
-        indexer.c_start = 0; 
-        indexer.sen = 0;
+        indexer.c_start = indexer.sen = 0; 
         //Append Para: init and add first sen
         if(indexer.page == fIndex.page) { //if furthest page we write to it 
           this.textOnPage.push([]); // init next para
-          console.log()
+          //console.log()
           this.textOnPage[indexer.para].push(this.text[indexer.page][indexer.para][indexer.sen]);
+          fIndex.c_start = fIndex.sen = 0
           fIndex.para = indexer.para;
         }
       }
       else if(isEOPara && isEOPage) {
+        //console.log("EOPage")
         //reset incrementors to begining of page upon completion
         indexer.para = indexer.sen = indexer.c_start = 0;
         //if Unlocked next page!Increment furthest index store to begining of next page
@@ -192,7 +198,7 @@ class TypeTracerApp extends Component {
 
     const buttonId = event.currentTarget.id; //currentTarget points to where handler is bound
     indexer.page = (buttonId == 'Next' ? (indexer.page + 1) : (indexer.page - 1));
-    console.log(indexer.page)
+    //console.log(indexer.page)
     //set textOnPage of page pageNum; 
     if(indexer.page == this.furthestIndexStore.page) { 
       this.furthestPageBuilder(); //build part of the page which was typed
@@ -224,6 +230,7 @@ class TypeTracerApp extends Component {
 
   render() {
     const indexer = this.indexer;
+    // console.log(this.furthestIndexStore)
     // console.log(indexer)
     // console.log(this.furthestIndexStore) 
     //console.log(`text: ${this.textOnPage} isC: ${this.isInputCorrect} para: ${indexer.para} sen: ${indexer.sen} charS: ${indexer.c_start} charE: ${indexer.c_start + this.state.textInput.length}`)  
