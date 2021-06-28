@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './TypeTracerApp.css';
 import Page from './Page/Page'
 import InputBar from './InputBar/InputBar'
+import TitleSaveBar from './TitleSaveBar/TitleSaveBar'
 
 class TypeTracerApp extends Component {
   constructor(props) {
@@ -247,11 +248,11 @@ class TypeTracerApp extends Component {
     //console.log(`text: ${this.textOnPage} isC: ${this.isInputCorrect} para: ${indexer.para} sen: ${indexer.sen} charS: ${indexer.c_start} charE: ${indexer.c_start + this.state.textInput.length}`)  
     return (
       <div className = 'h-navOffset flex justify-center'>
-        <div className='ma2 w-custom w-custom-m w-custom-l'>
-          <div name ='topBar' className='flex justify-between'>
-            <span className='i fw3'>{`${this.title}`}</span>
-            <span>{'# NUMBER'}  <button onClick={this.onProgressSave}>{'save'}</button></span>
-          </div>
+        <div className='ma2 w-custom w-custom-m w-custom-l'> 
+          <TitleSaveBar
+          title={this.title}
+          progressSave={this.onProgressSave}
+          />
           <Page 
             text={this.textOnPage}
             isCorrect={this.isInputCorrect}

@@ -1,0 +1,39 @@
+/* TitleSaveBar.css */
+.title-overflow { /*gives ellipsies to title overflow*/
+  overflow:hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.title-overflow:hover {
+  position: relative;
+  text-overflow: clip;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.bb-double {
+  border-bottom: 4px double #999;
+}
+
+/* media queries that match Tachyons -m, -l  breakpoints to implement custom classes when necessary*/
+@media screen and (min-width: 30em) and (max-width: 60em) {
+  /*70% fixed height of container element*/
+  #title{
+    max-width: 21rem;
+  }
+}
+
+@media screen and (min-width: 60em) {
+   /*70% fixed height of container element*/
+  #title {
+    max-width:26.25rem 
+  }
+}
+
+@media screen and (max-width: 30em) { 
+  /*50% fixed height of container element*/
+  #title{
+    max-width:13.125rem;
+  };
+}
