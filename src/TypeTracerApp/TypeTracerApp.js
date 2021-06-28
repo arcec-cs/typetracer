@@ -281,7 +281,7 @@ class TypeTracerApp extends Component {
     //console.log(`text: ${this.textOnPage} isC: ${this.isInputCorrect} para: ${indexer.para} sen: ${indexer.sen} charS: ${indexer.c_start} charE: ${indexer.c_start + this.state.textInput.length}`)  
     return (
       <div className = 'h-navOffset flex justify-center'>
-        <div className='mt3 mh2 w-custom w-custom-m w-custom-l'> 
+        <div className='mt3 mh3 w-custom w-custom-m w-custom-l'> 
           <TitleSaveBar
           title={this.title}
           progressSave={this.onProgressSave}
