@@ -21,7 +21,7 @@ const Page = ({text, isCorrect, paraCur, senCur, charStart, charEnd}) => {
   });
   
   return (
-    <div className='f4 h-75' style={{ overflowY: 'scroll'}}>
+    <div className='f4 h-page' style={{ overflowY: 'scroll'}}>
       {paragraphList}
     </div>
   );

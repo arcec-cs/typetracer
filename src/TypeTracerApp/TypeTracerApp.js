@@ -3,6 +3,8 @@ import './TypeTracerApp.css';
 import Page from './Page/Page'
 import InputBar from './InputBar/InputBar'
 import TitleSaveBar from './TitleSaveBar/TitleSaveBar'
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import Loader from "react-loader-spinner";
 
 class TypeTracerApp extends Component {
   constructor(props) {
@@ -23,12 +25,13 @@ class TypeTracerApp extends Component {
     this.furthestIndexStore = {page: 1, para: 0, sen: 0, c_start: 0} //keeps track of furthest progress, fetched from Ttracer db
      
     //states used to manipulate page
-    this.textOnPage = []; //will consist of already typed text and text the user is typing
+    this.textOnPage = undefined; //will consist of already typed text and text the user is typing
     this.indexer = {page: 1, para: 0, sen: 0, c_start: 0}; //keeps track of typing postion in book
     this.isInputCorrect = true; // says if textInput matches expected input, not state bc changes before & with textInput state already
     
     this.state = { 
       textInput: '',
+      isInitError: ''
     };
   }
 
@@ -54,51 +57,60 @@ class TypeTracerApp extends Component {
     
     const fetchAndStoreText = () => 
       fetch(`http://localhost:3005/text/${tId}`)
-      .then(res=> res.json())//maybe change to .text() so neo need to restringify?
+      .then(res=> {
+        if(res.ok) return res.json();
+        else throw new Error('unable to fetch text'); //worst case
+      })
       .then(text => {
         localStorage[`ttText${this.tId}`] = text;// store here so we dont have to restringify
         return JSON.parse(text);
       })// set text
-      .catch(error => console.log(error));
   
     const fetchProgress = () => 
       fetch(`http://localhost:3005/myTexts/${uId}/progress/${tId}`, {headers:{'Authorization': `bearer ${this.token}`}})
-      .then(res=> res.json()) // ret progress index
-      .catch(error => console.log(error));
+      .then(res=> {
+        if(res.ok) return res.json();
+        else throw new Error('unable to fetch text');//worst case
+      }) // ret progress index
     
     const setSaveProgressInterval = () =>  //Updates progress at an interval if progress was made
       this.progressTimerId = setInterval(() => this.onProgressSave(), 15000); 
     
     const addToMyTexts = () => //Makes Record, do here to ensure sequence between record making and progress fetching, progress in record. 
-      fetch(`http://localhost:3005/myTexts/${uId}/${tId}`, {method: 'POST', headers:{'Authorization': `bearer ${token}`}});
+      fetch(`http://localhost:3005/myTexts/${uId}/${tId}`, {method: 'POST', headers:{'Authorization': `bearer ${token}`}})
+      .then(res=> { if(!res.ok) throw new Error('unable to add to MyTexts'); }); //worst case
     
-    //Check isLoggedIn - fetchProgress; Check isTextInLocalStorage- fetchText; 
-    if(uId) {//Logged in
-      if(!JSON.parse(sessionStorage.myTextsIndex)[tId]) await addToMyTexts();
-      if(!localStorage[`ttText${tId}`]) { //NOT in local storage 
-      console.log("logged in NOT in local storage")
-      //fetch in parallel
-      const promises = [fetchAndStoreText(), fetchProgress()]; 
-      const [text, progress] = await Promise.all(promises);
-      //set text and progress
-      this.text = text;
-      this.furthestIndexStore = progress
-      this.indexer = Object.assign({}, this.furthestIndexStore)
-      } else { //In local storage
-        console.log("logged In in local storage")
-        this.text = JSON.parse(localStorage[`ttText${tId}`]);
-        this.furthestIndexStore = await fetchProgress()
+    try{
+      //Check isLoggedIn - fetchProgress; Check isTextInLocalStorage- fetchText; 
+      if(uId) {//Logged in
+        if(!JSON.parse(sessionStorage.myTextsIndex)[tId]) await addToMyTexts();
+        if(!localStorage[`ttText${tId}`]) { //NOT in local storage 
+        console.log("logged in NOT in local storage")
+        //fetch in parallel
+        const promises = [fetchAndStoreText(), fetchProgress()]; 
+        const [text, progress] = await Promise.all(promises);
+        //set text and progress
+        this.text = text;
+        this.furthestIndexStore = progress
         this.indexer = Object.assign({}, this.furthestIndexStore)
+        } else { //In local storage
+          console.log("logged In in local storage")
+          this.text = JSON.parse(localStorage[`ttText${tId}`]);
+          this.furthestIndexStore = await fetchProgress()
+          this.indexer = Object.assign({}, this.furthestIndexStore)
+        }
+        setSaveProgressInterval(); //set interval to update logged in user progress in the backend
+      }else {//NOT Logged In
+        if(!localStorage[`ttText${tId}`]) {this.text = await fetchAndStoreText(); console.log(`NOT logged In  NOT in local storage`)} //NOT in local storage 
+        else {this.text = JSON.parse(localStorage[`ttText${tId}`]); console.log("NOT logged In in local storage")};//in local storage
       }
-      setSaveProgressInterval(); //set interval to update logged in user progress in the backend
-    }else {//NOT Logged In
-      if(!localStorage[`ttText${tId}`]) {this.text = await fetchAndStoreText(); console.log(`NOT logged In  NOT in local storage`)} //NOT in local storage 
-      else {this.text = JSON.parse(localStorage[`ttText${tId}`]); console.log("NOT logged In in local storage")};//in local storage
-    }
-    //Build Current page and render it
-    this.furthestPageBuilder();
-    //console.log(this.textOnPage)
-    this.setState({}); //to get to re-render with initState
+   
+    
+      //Build Current page and render it
+      this.furthestPageBuilder();
+      //console.log(this.textOnPage)
+      this.setState({}); //to get to re-render with initState
+    }catch{this.setState({isInitError:true})}
   }
 
   onProgressSave = () => {
@@ -114,6 +126,7 @@ class TypeTracerApp extends Component {
       this.progressLastSent =  Object.assign({}, this.furthestIndexStore);
       options.body =  JSON.stringify({progress: this.furthestIndexStore})
       fetch(`http://localhost:3005/myTexts/${this.uId}/progress/${this.tId}`, options)
+      .catch()
     } else{console.log("nothing to save")}
   }
 
@@ -240,27 +253,40 @@ class TypeTracerApp extends Component {
     }
   }
 
+  getPageDisplay(){
+    const indexer = this.indexer;
+    const loader = <span className='tc h-page'><Loader type="ThreeDots" color="#000000" height={80} width={80} timeout={20000}/></span>;
+    if(this.state.isInitError === true) return (
+      <div className='h-page tc pt4'>
+        <h1 className='mv0'>{'oops, something went wrong :('}</h1>
+      </div>);
+      
+    if(this.textOnPage) return <Page 
+      text={this.textOnPage}
+      isCorrect={this.isInputCorrect}
+      paraCur={indexer.para}
+      senCur={indexer.sen}
+      charStart={indexer.c_start}
+      charEnd={indexer.c_start + this.state.textInput.length}/>
+    else return (<div className='h-page tc pt4'>{loader}</div>);
+   }
+
+
   render() {
     const indexer = this.indexer;
+    const page = this.getPageDisplay()
     // console.log(this.furthestIndexStore)
     // console.log(indexer)
     // console.log(this.furthestIndexStore) 
     //console.log(`text: ${this.textOnPage} isC: ${this.isInputCorrect} para: ${indexer.para} sen: ${indexer.sen} charS: ${indexer.c_start} charE: ${indexer.c_start + this.state.textInput.length}`)  
     return (
       <div className = 'h-navOffset flex justify-center'>
-        <div className='ma2 w-custom w-custom-m w-custom-l'> 
+        <div className='mt3 mh2 w-custom w-custom-m w-custom-l'> 
           <TitleSaveBar
           title={this.title}
           progressSave={this.onProgressSave}
           />
-          <Page 
-            text={this.textOnPage}
-            isCorrect={this.isInputCorrect}
-            paraCur={indexer.para}
-            senCur={indexer.sen}
-            charStart={indexer.c_start}
-            charEnd={indexer.c_start + this.state.textInput.length}
-          />
+          {page}
           <InputBar
             hasNextButton={indexer.page < this.furthestIndexStore.page}
             hasLastButton={indexer.page != 1}

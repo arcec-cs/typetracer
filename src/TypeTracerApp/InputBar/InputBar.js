@@ -2,10 +2,11 @@ import React from 'react';
 import TextInput from './TextInput';
 import NextPageButton from './NextPageButton';
 import LastPageButton from './LastPageButton';
+import './InputBar.css'
 
 const InputBar = ({textInput, onTextInputChange, hasNextButton, hasLastButton, onButtonClick , currentPage}) => {
   return(  
-    <section className = 'flex justify-between mt1'>
+    <section className = 'flex justify-between pt3 mt2 mb3 bt-double'>
        <TextInput 
           value={textInput} 
           textInputChange={onTextInputChange}

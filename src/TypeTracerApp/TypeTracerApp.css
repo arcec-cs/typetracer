@@ -1,6 +1,11 @@
 /* TypeTracerApp.css follows Tachyons naming conventions*/
 .h-navOffset{ /* navbar is fixed height 50 px*/ 
-  height: calc(100vh - 50px) 
+  height: calc(100vh - 50px); 
+}
+
+/* 100vh - total of navbar, TitleSaveBar, InputBar, spacing */
+.h-page {
+  height: calc(100vh - 206px);
 }
 
 /* media queries that match Tachyons -m, -l  breakpoints to implement custom classes when necessary*/
