@@ -15,6 +15,10 @@
 .bb-double {
   border-bottom: 4px double #999;
 }
+/* container width so flex reszing doesnt happen between switching from loader to saveStatus */
+#saveStatus{ 
+  width: 2.5rem;
+}
 
 /* media queries that match Tachyons -m, -l  breakpoints to implement custom classes when necessary*/
 @media screen and (min-width: 30em) and (max-width: 60em) {
@@ -36,4 +40,35 @@
   #title{
     max-width:13.125rem;
   };
+}
+
+/* hideMe and hideMe2 because in order to re-run animations one must re render html dom node */
+.hideMe {
+  -webkit-animation: cssAnimation 3s forwards; 
+  animation: cssAnimation 3s forwards;
+}
+@keyframes cssAnimation {
+  0%   {opacity: 1;}
+  90%  {opacity: 1;}
+  100% {opacity: 0;}
+}
+@-webkit-keyframes cssAnimation {
+  0%   {opacity: 1;}
+  90%  {opacity: 1;}
+  100% {opacity: 0;}
+}
+
+.hideMe2 {
+  -webkit-animation: cssAnimation2 3s forwards; 
+  animation: cssAnimation2 3s forwards;
+}
+@keyframes cssAnimation2 {
+  0%   {opacity: 1;}
+  90%  {opacity: 1;}
+  100% {opacity: 0;}
+}
+@-webkit-keyframes cssAnimation2 {
+  0%   {opacity: 1;}
+  90%  {opacity: 1;}
+  100% {opacity: 0;}
 }

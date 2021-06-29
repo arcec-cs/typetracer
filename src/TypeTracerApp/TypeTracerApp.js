@@ -29,6 +29,7 @@ class TypeTracerApp extends Component {
     this.indexer = {page: 1, para: 0, sen: 0, c_start: 0}; //keeps track of typing postion in book
     this.isInputCorrect = true; // says if textInput matches expected input, not state bc changes before & with textInput state already
     
+    //this.saveId=1;
     this.state = { 
       textInput: '',
       isInitError: ''
@@ -74,7 +75,7 @@ class TypeTracerApp extends Component {
       }) // ret progress index
     
     const setSaveProgressInterval = () =>  //Updates progress at an interval if progress was made
-      this.progressTimerId = setInterval(() => this.onProgressSave(), 15000); 
+      this.progressTimerId = setInterval(() => this.onProgressSave(), 30000); 
     
     const addToMyTexts = () => //Makes Record, do here to ensure sequence between record making and progress fetching, progress in record. 
       fetch(`http://localhost:3005/myTexts/${uId}/${tId}`, {method: 'POST', headers:{'Authorization': `bearer ${token}`}})
@@ -105,7 +106,6 @@ class TypeTracerApp extends Component {
         else {this.text = JSON.parse(localStorage[`ttText${tId}`]); console.log("NOT logged In in local storage")};//in local storage
       }
    
-    
       //Build Current page and render it
       this.furthestPageBuilder();
       //console.log(this.textOnPage)
@@ -113,7 +113,8 @@ class TypeTracerApp extends Component {
     }catch{this.setState({isInitError:true})}
   }
 
-  onProgressSave = () => {
+  onProgressSave = (isManualSave) => {
+    const auto = () => !isManualSave ? 'Auto ' : ''; // let user know about auto save
     const options = {
       method: 'PUT',
       headers: {
@@ -121,13 +122,36 @@ class TypeTracerApp extends Component {
         'Content-Type' : 'application/json' 
       },
     };
+    //values passed down to TitleSaveBar to indicate saving progress 
+    const setSaveStatusIndicator = (statusMsg) => { 
+      this.isSaving = false; //removes loader
+      this.saveStatus = statusMsg; //success or failure of fetch
+      this.saveAnimationRefresh = !this.saveAnimationRefresh;//toggles between duplicate animations
+      this.setState({});//set state  
+    }
+    //isSaving is a boolean to render the loader, gets falisfied on promise return or manually saving with no progress
+    this.isSaving = true; 
+    //if progress was made save it 
     if(JSON.stringify(this.furthestIndexStore) !== JSON.stringify(this.progressLastSent)) {
-      console.log("manual save")
-      this.progressLastSent =  Object.assign({}, this.furthestIndexStore);
-      options.body =  JSON.stringify({progress: this.furthestIndexStore})
+      options.body =  JSON.stringify({progress: this.furthestIndexStore}) //set progress a time of call
       fetch(`http://localhost:3005/myTexts/${this.uId}/progress/${this.tId}`, options)
-      .catch()
-    } else{console.log("nothing to save")}
+      .then(res=> {
+        if(res.ok) {
+          setSaveStatusIndicator(`${auto()}Saved`)
+          setTimeout(()=>this.progressLastSent =  Object.assign({}, this.furthestIndexStore)) //doesnt need to be sync
+        } //set state to rerender w/ message
+        else {setSaveStatusIndicator('Not Saved')}
+      })
+      .catch(()=> {setSaveStatusIndicator('Not Saved')})
+    } 
+    else { //no progress to save, dont need loader, 
+      this.isSaving = false;  
+      if(isManualSave) { //despite nothing to save render saved so user know thier progress is saved
+        this.saveAnimationRefresh = !this.saveAnimationRefresh;
+        this.saveStatus=`${auto()}Saved`;
+      }  else return 0; // no need to setState if not manual save
+    } 
+    this.setState({}); //so loader may be rendered if progress fetch is occuring/ savedStatus can be rendered if isManualSave
   }
 
   onTextInputChange = (event) => { //pubclassfeild syntax sets on method instance/ normal func on prototype
@@ -285,6 +309,9 @@ class TypeTracerApp extends Component {
           <TitleSaveBar
           title={this.title}
           progressSave={this.onProgressSave}
+          isSaving={this.isSaving}
+          saveStatus={this.saveStatus} 
+          animationRefresher={this.saveAnimationRefresh}
           />
           {page}
           <InputBar
