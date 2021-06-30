@@ -33,17 +33,9 @@ class MyTexts extends Component {
     const token = userInfo.accessTokenInfo.accessToken;
     const uId = userInfo.uId;
     fetch(`http://localhost:3005/myTexts/${uId}`, {headers:{'Authorization': `bearer ${token}`}})
-    .then(res=> res.json())
-    .then(data => {
-      //Store to check if record must be created for users can also start ttApp from catalog; send to task queue, not urgent
-      setTimeout(()=> {
-        const store = {}; //change data from array to obj so we can index instead of iterate
-        data.forEach(textData => store[`${textData.id}`] = 1);// just want ids to index so we know if record exist in db w/ user
-        sessionStorage.myTextsIndex = JSON.stringify(store);
-      });
-      this.setState({myTexts: data})//re-render with fetched data
-    }) 
-    .catch(error => this.setState({isError: true})); //there was an error, reload page
+    .then(res => res.json())
+    .then(data => this.setState({myTexts: data}))
+    .catch(e => this.setState({isError: true})); //there was an error, reload page
   }
 
   getCurrentDisplay(){
