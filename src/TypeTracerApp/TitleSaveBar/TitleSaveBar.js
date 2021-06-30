@@ -7,7 +7,7 @@ import Loader from "react-loader-spinner";
 const TitleSaveBar = ({title, progressSave, isSaving, saveStatus, animationRefresher}) => { 
   
   let saveIndicator = '';
-  let sSColor = () => (saveStatus && saveStatus.includes('Saved')) ? 'green' : 'red'; 
+  let sSColor = () => (saveStatus && saveStatus.includes('Not')) ? 'red' : 'green'; 
   
   const isInitialRender = (isSaving === undefined && animationRefresher === undefined);
   if(!isInitialRender){

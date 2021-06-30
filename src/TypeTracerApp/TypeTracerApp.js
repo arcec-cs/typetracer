@@ -243,23 +243,54 @@ class TypeTracerApp extends Component {
 
   onPageFlip = (event) => {
     let indexer = this.indexer;
-    let fIndex = this.furthestIndexStore;
-
     const buttonId = event.currentTarget.id; //currentTarget points to where handler is bound
-    indexer.page = (buttonId == 'Next' ? (indexer.page + 1) : (indexer.page - 1));
-    //console.log(indexer.page)
-    //set textOnPage of page pageNum; 
-    if(indexer.page == this.furthestIndexStore.page) { 
-      this.furthestPageBuilder(); //build part of the page which was typed
-      indexer.c_start = fIndex.c_start;//set indexer to furthestIndexes, progress on the furthest page
-      indexer.sen = fIndex.sen;
-      indexer.para = fIndex.para;
-    } else { //already typed whole page, render whole page and start at begining
-      this.textOnPage = this.text[indexer.page];
-      indexer.c_start = indexer.sen = indexer.para = 0; //reset indexes to beginning of page 
+    //inc/dec indexer, Number() added bc sometimes would coercion would occur
+    indexer.page = (buttonId == 'Next' ? (Number(indexer.page) + 1) : (indexer.page - 1));
+    this.toIndexerPage() //move to indexer page
+  }
+
+  onPageNumberInputHandler = (event) => { //validates input, moves to next page if valid/
+    //set pageInput, if submit need to get input element, else value in event target
+    let pageInput;
+    if(event.type=== 'submit'){    
+      const input = event.target.querySelector('input');//target is form, get input 
+      pageInput = input.value;
+    }else pageInput = event.target.value;//for onBlur
+    
+    //indexes
+    const indexer = this.indexer; 
+    const fIndex = this.furthestIndexStore;
+    
+    //input validation functions
+    const isNum = () => /^\d+$/.test(pageInput); //atleast on num
+    const isNotCurrentPage = () => pageInput!==indexer.page;
+    const isInRange = () =>  pageInput <= fIndex.page && pageInput > 0;
+    const isInputValid = () => (isNum() && isNotCurrentPage() && isInRange());
+    
+    //if input valid then go to page inputted
+    if(isInputValid()){
+      indexer.page = pageInput;//set since valid
+      this.toIndexerPage()
     } 
-    //set state to reset text input to rerender/user input does not apply to next page
-    this.setState({textInput: ''});
+    document.getElementById("PageNumberInput").reset();// restores forms default vals, clears input
+    event.preventDefault();// to prevent onSubmit of form refreshing the page.
+  }
+
+  //sets indexes and prepares page content based on if it is the last page or a page that has alredy been typed
+  toIndexerPage() { 
+    const indexer = this.indexer; 
+    const fIndex = this.furthestIndexStore;
+    const isLastPage = indexer.page === fIndex.page; 
+      if(isLastPage) { 
+        this.furthestPageBuilder(); //build part of the page which was typed
+        indexer.c_start = fIndex.c_start;//set indexer to furthestIndexes, progress on the furthest page
+        indexer.sen = fIndex.sen;
+        indexer.para = fIndex.para;
+      } else { //already typed whole page, render whole page and start at begining
+        this.textOnPage = this.text[indexer.page];
+        indexer.c_start = indexer.sen = indexer.para = 0; //reset indexes to beginning of page 
+      } 
+      this.setState({textInput: ''});//ReRender new page, reset text input
   }
 
   furthestPageBuilder() {
@@ -321,6 +352,8 @@ class TypeTracerApp extends Component {
             textInput={this.state.textInput} 
             onTextInputChange={this.onTextInputChange}
             currentPage={indexer.page}
+            furthestPage={this.furthestIndexStore.page}
+            onPageNumberInputHandler={this.onPageNumberInputHandler}
           />
         </div>
       </div>
