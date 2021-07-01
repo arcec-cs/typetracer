@@ -16,16 +16,22 @@ class App extends Component {
     }
   }
 
-  onComponentWillMount() {
-    if(!sessionStorage.ttUser) { //Handles keeping signed in state true upon reload
-      const isAccessTokenValid = (JSON.parse(sessionStorage.ttuser).accessTokenInfo.expires > Math.floor(Date.now() / 1000));
+  componentDidMount() {
+    if(sessionStorage.ttUser) { //Handles keeping signed in state true upon reload
+      const isAccessTokenValid = (JSON.parse(sessionStorage.ttUser).accessTokenInfo.expires > Math.floor(Date.now() / 1000));
       if (isAccessTokenValid) this.setState({isSignedIn: true});
+    }
+    if(sessionStorage.route){
+      this.setState({route:sessionStorage.route});
     }
   }
 
   onRegisterOrSignIn = () => this.setState({isSignedIn: true});
 
-  onRouteChange = (route) => this.setState({route: route}); //need to have session storage route for reloads
+  onRouteChange = (route) => {
+    this.setState({route: route})
+    sessionStorage.route = route; //need to have session storage route for browser reloads
+  }; 
 
   onSignOut = () => {
     const ttUser = JSON.parse(sessionStorage.ttUser);//get from session storage
