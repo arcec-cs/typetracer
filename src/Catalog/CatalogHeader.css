@@ -1,0 +1,28 @@
+/* CatalogHeader.css */
+/* media queries that match Tachyons -m, -l  breakpoints to implement custom classes when necessary */
+@media screen and (min-width: 30em) and (max-width: 60em) {
+  /*w-custom widths calc from tachyons measure size * font size i.e 1rem * 30em + 4rem padding + 8rem to make it larger than card*/
+  #browseByBar{
+    width: 42rem;
+    max-width: 90%;
+  }
+
+  #catalogHeader{
+    font-size: 4rem;
+  }
+}
+
+@media screen and (min-width: 60em) {
+  /*w-custom widths calc from tachyons measure size * font size i.e 1.25rem * 30em + 4rem padding + 8rem to make it larger than card */
+  #browseByBar{
+    width: 49.5rem;
+  }
+}
+/* custom small break point */
+@media screen and (max-width: 30em) { 
+/*w-custom widths calc from tachyons measure size * font size i.e .875rem * 30em */
+  #browseByBar{ 
+    width: 26.25rem;
+    max-width: 85%;
+  }
+}

@@ -1,4 +1,5 @@
 import React, {Component } from 'react';
+import './Catalog.css'
 import BucketList from './BucketList';
 import TitleCardList from '../Shared/TitleCardList';
 import CatalogHeader from './CatalogHeader'
@@ -55,7 +56,7 @@ class Catalog extends Component {
     //conditionally render content of the Catalog page based of path state;  
     const path = this.state.path; 
     if(path.includes('/')) //for buckets i.e specific author or category
-      if(this.cache[`${path}`]) return <TitleCardList onItemClick={this.onPathChange} onTitleClick={this.onTitleClick}titleInfoArr={this.cache[`${path}`]}/>;
+      if(this.cache[`${path}`]) return <TitleCardList onItemClick={this.onPathChange} onTitleClick={this.onTitleClick} titleInfoArr={this.cache[`${path}`]} type={path}/>;
       else {this.shouldFetch = true; return loader}
     else if(path === 'titles') 
       if(this.cache.titles) return <TitleCardList onItemClick={this.onPathChange} onTitleClick={this.onTitleClick} titleInfoArr={this.cache.titles}/>;//check this.cache for content
@@ -85,7 +86,7 @@ class Catalog extends Component {
     return (
       <div name='CatalogContainer'> 
         <CatalogHeader onBrowseByClick = {this.onPathChange}/>
-        {isTitleCardList && <h1 className="f3 f2-l bold center mw5 mw6-l mt0">{this.listTitle}:</h1> }
+        {isTitleCardList && <h1 id='titleListCat' className="f3 f2-l bold center mt0">{this.listTitle}:</h1> }
         {display}
         <Modal open={this.state.isModalOpen} onClose={this.onCloseModal} center>
         <div className='tc pa3'>

@@ -1,21 +1,38 @@
 import React from 'react';
+import './TitleCard.css'
 //displays information about a Title and relevant metadata
-const TitleCard = ({title, author, category,  words, id, authorId, categoryId, titleClick, itemClick}) => {
-  //dont want underline pointer on myTexts page
-  const itemClassName = (itemClick? 'underline pointer': '' ); 
+const TitleCard = ({title, author, category,  words, id, authorId, categoryId, titleClick, itemClick, type}) => {
+  const isTypeX = (bucket) => (type) && type.includes(bucket) ? true : false
+  const clickableStyle = 'underline pointer'
+  const getClassName = (bucket) => itemClick && type && isTypeX(bucket) ? '' : clickableStyle;
   return ( 
-    <article className='center mw5 mw6-ns ba mv4'>
+    <article className='center w-custom ba mv4'>
+      <span className='bg-near-black w-100 dib'>
       <h1
       id={id}
       title={title} 
-      className='measure f4 bg-near-black white mv0 pv2 ph3 underline pointer'
+      className='content-box measure f4 white mv0 pv2 ph4 underline pointer'
       onClick={titleClick}
       >{title}</h1>
-      <div className='pa2 bt'>
-        <ul className='list pl0'>
-          <li className='pa1'><span className={'b'}>{`Author: `}</span><span id={`authors/${authorId}`} className={`${itemClassName}`} onClick={itemClick}>{author}</span></li>
-          <li className='pa1'><span className={'b'}>{`Category: `}</span><span id={`categories/${categoryId}`} className={`${itemClassName}`} onClick={itemClick}>{category}</span></li>
-          <li className='pa1'><span className={'b'}>{`Words: `}</span>{`${words}`}</li>
+      </span>
+      <div className='pa2 ph4 bt'>
+        <ul className='list pl0 mv2'>
+          <li className='pv1'>
+            <span className={'b'}>{`Author: `}</span>
+            <span id={`authors/${authorId}`} className={`${getClassName('author')}`} onClick={itemClick}>
+              {author}
+            </span>
+            </li>
+          <li className='pv2'>
+            <span className={'b'}>{`Category: `}</span>
+            <span id={`categories/${categoryId}`} className={`${getClassName('categ')}`} onClick={itemClick}>
+              {category}
+            </span>
+          </li>
+          <li className='pv1'>
+            <span className={'b'}>{`Words: `}</span>
+            {`${words}`}
+          </li>
         </ul>
       </div>
     </article>
