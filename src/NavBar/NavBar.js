@@ -8,7 +8,7 @@ const NavBar = ({routeChange, signedIn, signOut, menuIsOpen, menuStateChange, cl
   console.log('menu:' + menuIsOpen)
   return ( 
     <span>
-      <div className='bg-black' style= {{width: "100", position: "sticky", top: "0"}}> 
+      <div className='bg-black' style= {{width: "100", position: "sticky", top: "0", zIndex: 2}}> 
         <nav className='flex justify-between bb b--white-10'>
           <span className='flex items-center'><Logo routeChange={routeChange}/></span>
         </nav>

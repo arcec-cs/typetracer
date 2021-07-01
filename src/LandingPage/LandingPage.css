@@ -1,18 +1,21 @@
 /* LandingPage.css follows Tachyons naming conventions */
-.min-h6{
-  min-height: 6rem;
-}
 
+/* card pading */
 .pa-3{
   padding: 3%;
 }
 
-.mh{
-  max-height: 48rem;
+.h-navOffset{ /* navbar is fixed height 50 px*/ 
+  height: calc(100vh - 50px); 
 }
 
-/* media queries that match Tachyons -ns, -m, -l  breakpoints to implement custom classes when necessary */
-@media screen and (min-width: 30em) { 
+/* to help s/m layouts */
+.h-min-landing{
+  min-height: 25rem;
+}
+
+.h-80{
+  height:80%;
 }
 
 @media screen and (min-width: 30em) and (max-width: 60em) {
@@ -21,10 +24,18 @@
   }
 }
 
+/* media queries -l breakpoint size  */
+
 @media screen and (min-width: 60em) {
-  .w-45-l {
-    width: 45%;
+  /* all for card sizing */
+  .w-35-l {
+    width: 35%;
   }
+
+  .h-65-l {
+    height:65%;
+  }
+
   .grow-l {
     -moz-osx-font-smoothing:grayscale;
     backface-visibility:hidden;
@@ -42,30 +53,31 @@
     padding: 2%;
   }
 
-  .mv-4-l{
-    margin-top: 4%;
-     margin-bottom: 4%; 
-  }
-  .min-h20-l{
-    min-height: 20rem;
-  }
-
   .max-mr-10-l{
     margin-right: min(13.3rem, 10%);
   }
-  .hover-bg-gray-l:hover { background: #777777; }
+  .hover-bg-gray-l:hover { 
+    background: #777777; 
+  }
 }
 
 /* custom media query nl NOT LARGE */
 @media screen and (max-width: 60em) { 
+  /* card sizing */
   .h-35-nl{
     height:  35%
   }
   .h-100-nl{
     height: 100%
   }
+  /* spacing for cards */
   .mh3-nl{
-    margin-left: 1rem;
-    margin-right: 1rem;
+    margin:2rem;
   }
+  /* used for intro */
+  .mb4-nl{
+    margin-bottom: 4rem;
+  }
+
+
 }
