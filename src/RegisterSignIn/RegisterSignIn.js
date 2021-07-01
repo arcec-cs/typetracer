@@ -92,7 +92,7 @@ class RegisterSignIn extends React.Component {
     const thisForm = (this.state.isSignInForm) ? 'Sign In' : 'Register';
     const otherForm = (!this.state.isSignInForm) ? 'Sign In' : 'Register';
     return (
-      <article className='br3 ba b--black-10 mv4 w-90 w-50-m w-40-l mw6 shadow-5 center'>
+      <article className='br3 ba b--black-10 mv4 w-90 w-50-m w-40-l mw6 shadow-5 center bg-white'>
         <main className='pa4 black-80'>
           <div className='measure'>
             <fieldset className='ba b--transparent ph0 mh0'>

@@ -7,6 +7,12 @@
 .h-page {
   height: calc(100vh - 206px);
 }
+/* for modal component */
+.customModal { 
+  width: 90%;
+  background: #111111 !important;
+  color: white !important;
+}
 
 /* media queries that match Tachyons -m, -l  breakpoints to implement custom classes when necessary*/
 @media screen and (min-width: 30em) and (max-width: 60em) {

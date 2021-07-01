@@ -55,7 +55,7 @@ class App extends Component {
         page = <MyTexts routeChange={this.onRouteChange}/>;
         break;
       case 'typeTracerApp':
-        page = <TypeTracerApp routeChange={this.onRouteChange}/>;
+        page = <TypeTracerApp routeChange={this.onRouteChange} onRegisterOrSignIn={this.onRegisterOrSignIn} onSignOut={this.onSignOut}/>;
         break;
       default:
         page = <LandingPage routeChange={this.onRouteChange}/>;

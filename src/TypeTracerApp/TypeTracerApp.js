@@ -3,8 +3,11 @@ import './TypeTracerApp.css';
 import Page from './Page/Page'
 import InputBar from './InputBar/InputBar'
 import TitleSaveBar from './TitleSaveBar/TitleSaveBar'
+import RegisterSignIn from '../RegisterSignIn/RegisterSignIn'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Loader from "react-loader-spinner";
+import 'react-responsive-modal/styles.css';
+import { Modal } from 'react-responsive-modal'; 
 
 class TypeTracerApp extends Component {
   constructor(props) {
@@ -32,7 +35,8 @@ class TypeTracerApp extends Component {
     //this.saveId=1;
     this.state = { 
       textInput: '',
-      isInitError: ''
+      isInitError: '',
+      isModalOpen: false
     };
   }
 
@@ -71,7 +75,7 @@ class TypeTracerApp extends Component {
       fetch(`http://localhost:3005/myTexts/${uId}/progress/${tId}`, {headers:{'Authorization': `bearer ${this.token}`}})
       .then(res=> {
         if(res.ok) return res.json();
-        else throw new Error('unable to fetch text');//worst case
+        else {console.log("error"); throw new Error('unable to fetch text');}//worst case
       }) // ret progress index
     
     const setSaveProgressInterval = () =>  //Updates progress at an interval if progress was made
@@ -84,7 +88,7 @@ class TypeTracerApp extends Component {
     try{
       //Check isLoggedIn - fetchProgress; Check isTextInLocalStorage- fetchText; 
       if(uId) {//Logged in
-        if(!JSON.parse(sessionStorage.myTextsIndex)[tId]) await addToMyTexts();
+        await addToMyTexts(); //ensure that the current tId and uId has a record on the table
         if(!localStorage[`ttText${tId}`]) { //NOT in local storage 
         console.log("logged in NOT in local storage")
         //fetch in parallel
@@ -105,15 +109,38 @@ class TypeTracerApp extends Component {
         if(!localStorage[`ttText${tId}`]) {this.text = await fetchAndStoreText(); console.log(`NOT logged In  NOT in local storage`)} //NOT in local storage 
         else {this.text = JSON.parse(localStorage[`ttText${tId}`]); console.log("NOT logged In in local storage")};//in local storage
       }
+    
+      //Special case:Check for logging in from modal, so progress is saved for signedin/registerd users
+      const isLoggingInFromModal = this.furthestIndexStoreNotLoggedIn;
+      if(isLoggingInFromModal) { //shall save users not logged in progress if it is greater than their fetched progress
+        
+        const fetchedP = Object.values(this.furthestIndexStore)
+        const NotLoggedInP = Object.values(this.furthestIndexStoreNotLoggedIn)
+        let isNotLoggedInFurthest;
+        for(let i=0; i<4; i++) { //iterate to see which is furthest, break after unequvilancy bc indexes high to low
+          if(NotLoggedInP[i] != fetchedP[i]) {
+            if(NotLoggedInP[i] > fetchedP[i]) {isNotLoggedInFurthest = true; break;} 
+            else isNotLoggedInFurthest = false; break;
+          }// stay undefined if same 
+        }
+        if(isNotLoggedInFurthest) { //users progress is further than fet
+          this.furthestIndexStore = Object.assign({}, this.furthestIndexStoreNotLoggedIn);
+          delete this.furthestIndexStoreNotLoggedIn; //dont need
+          this.indexer = Object.assign({}, this.furthestIndexStore)
+          this.onProgressSave();
+        } 
+      }   
    
       //Build Current page and render it
       this.furthestPageBuilder();
       //console.log(this.textOnPage)
       this.setState({}); //to get to re-render with initState
-    }catch{this.setState({isInitError:true})}
+    }catch(err){console.log(err); this.setState({isInitError:true})}
   }
 
   onProgressSave = (isManualSave) => {
+    if(!sessionStorage.ttUser) return this.openSignRegisterInModal();
+
     const auto = () => !isManualSave ? 'Auto ' : ''; // let user know about auto save
     const options = {
       method: 'PUT',
@@ -325,11 +352,28 @@ class TypeTracerApp extends Component {
       charEnd={indexer.c_start + this.state.textInput.length}/>
     else return (<div className='h-page tc pt4'>{loader}</div>);
    }
-
+   //modal methods
+   openSignRegisterInModal(){ this.setState({isModalOpen: true}); }
+   onCloseModal = () => this.setState({isModalOpen: false});
+   onSigninRegisterSuccess = () => {
+     // save current progress, so we can compare this with users logged in progress
+     this.furthestIndexStoreNotLoggedIn =  Object.assign({}, this.furthestIndexStore);  
+     this.initTypeTracer(); //
+     this.onCloseModal();
+   }
 
   render() {
     const indexer = this.indexer;
     const page = this.getPageDisplay()
+
+    const closeIcon = (
+      <svg height="32px" viewBox="0 0 24 24" width="32px" fill="#FFFFFF"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+    );
+    const registerSignInModal = () => 
+    <Modal closeIcon={closeIcon} open={this.state.isModalOpen} onClose={this.onCloseModal} center classNames={{modal: 'customModal'}}> 
+      <h2 className='tc'>Sign In/Register to save your progress!</h2>
+      <RegisterSignIn routeChange={this.onSigninRegisterSuccess} registerOrSignIn={this.props.onRegisterOrSignIn} signOut={this.props.onSignOut}/>
+    </Modal>
     // console.log(this.furthestIndexStore)
     // console.log(indexer)
     // console.log(this.furthestIndexStore) 
@@ -337,6 +381,7 @@ class TypeTracerApp extends Component {
     return (
       <div className = 'h-navOffset flex justify-center'>
         <div className='mt3 mh3 w-custom w-custom-m w-custom-l'> 
+          {!sessionStorage.ttUser && registerSignInModal()}
           <TitleSaveBar
           title={this.title}
           progressSave={this.onProgressSave}
