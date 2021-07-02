@@ -12,6 +12,7 @@ const TitleCardList = ({titleInfoArr, type, onTitleClick, onItemClick}) => {
         words={titleInfo.words}
         authorId={titleInfo.author_id}
         categoryId={titleInfo.category_id}
+        lastAccessed={titleInfo.lastAccessed}
         titleClick={onTitleClick}
         itemClick={onItemClick}
         type={type} 

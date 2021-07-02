@@ -22,6 +22,8 @@ class MyTexts extends Component {
       isModalOpen:false,
       isError:false // 
     }
+
+    this.ttUser = sessionStorage.ttUser && JSON.parse(sessionStorage.ttUser)
   }
 
   componentDidMount() {
@@ -34,7 +36,8 @@ class MyTexts extends Component {
     const uId = userInfo.uId;
     fetch(`http://localhost:3005/myTexts/${uId}`, {headers:{'Authorization': `bearer ${token}`}})
     .then(res => res.json())
-    .then(data => this.setState({myTexts: data}))
+    .then(data => {this.setState({myTexts: data}); console.log(data)})
+    //.then(data => this.setState({myTexts: data}))
     .catch(e => this.setState({isError: true})); //there was an error, reload page
   }
 
@@ -56,7 +59,7 @@ class MyTexts extends Component {
     const display = this.getCurrentDisplay()
     return (
       <div name='CatalogContainer'> 
-        <MyTextsHeader name={'NamePlaceholder'}/>
+        <MyTextsHeader name={this.ttUser.name} date={this.ttUser.createdAt.slice(0,10)}/>
         {display}
         <Modal open={this.state.isModalOpen} onClose={this.onCloseModal} center>
           <div className='tc pa3'>

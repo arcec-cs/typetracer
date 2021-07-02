@@ -1,10 +1,10 @@
 import React from 'react';
 import './TitleCard.css'
 //displays information about a Title and relevant metadata
-const TitleCard = ({title, author, category,  words, id, authorId, categoryId, titleClick, itemClick, type}) => {
+const TitleCard = ({title, author, category,  words, id, authorId, categoryId, lastAccessed, titleClick, itemClick, type}) => {
   const isTypeX = (bucket) => (type) && type.includes(bucket) ? true : false
   const clickableStyle = 'underline pointer'
-  const getClassName = (bucket) => itemClick && type && isTypeX(bucket) ? '' : clickableStyle;
+  const getClassName = (bucket) => itemClick ? type && isTypeX(bucket) ? '' : clickableStyle :'';
   return ( 
     <article className='center w-custom ba mv4'>
       <span className='bg-near-black w-100 dib'>
@@ -33,6 +33,10 @@ const TitleCard = ({title, author, category,  words, id, authorId, categoryId, t
             <span className={'b'}>{`Words: `}</span>
             {`${words}`}
           </li>
+          {lastAccessed && <li className='pv1'>
+            <span className={'b'}>{`Last Accessed: `}</span>
+            {`${new Date(lastAccessed * 1000).toString().slice(0, 25)}`}
+          </li>}
         </ul>
       </div>
     </article>
