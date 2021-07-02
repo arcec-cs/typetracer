@@ -5,6 +5,7 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Loader from "react-loader-spinner";
 import 'react-responsive-modal/styles.css';
 import { Modal } from 'react-responsive-modal';
+import NoTextsBanner from './NoTextsBanner'
 
 class MyTexts extends Component {
   constructor(props) { 
@@ -18,7 +19,7 @@ class MyTexts extends Component {
     };
     
     this.state = { // path is used for api request, isModalOpen used to render modal
-      myTexts: null,
+      myTexts: undefined,
       isModalOpen:false,
       isError:false // 
     }
@@ -55,12 +56,14 @@ class MyTexts extends Component {
     this.setState({isModalOpen: true});
   }
   render() {
-    console.log(this.state.myTexts)
+    console.log('myTexts',this.state.myTexts)
     const display = this.getCurrentDisplay()
     return (
       <div name='CatalogContainer'> 
         <MyTextsHeader name={this.ttUser.name} date={this.ttUser.createdAt.slice(0,10)}/>
-        {display}
+        {(Array.isArray(this.state.myTexts) && this.state.myTexts.length !== 0) ? 
+        display : 
+        <NoTextsBanner routeChange={this.props.routeChange}/>}
         <Modal open={this.state.isModalOpen} onClose={this.onCloseModal} center>
           <div className='tc pa3'>
             <h2>{'Start TypeTracing:'}</h2>
