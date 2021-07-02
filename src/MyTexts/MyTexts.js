@@ -3,9 +3,8 @@ import TitleCardList from '../Shared/TitleCardList';
 import MyTextsHeader from './MyTextsHeader'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Loader from "react-loader-spinner";
-import 'react-responsive-modal/styles.css';
-import { Modal } from 'react-responsive-modal';
 import NoTextsBanner from './NoTextsBanner'
+import ToTextModal from '../Shared/ToTextModal';
 
 class MyTexts extends Component {
   constructor(props) { 
@@ -13,7 +12,7 @@ class MyTexts extends Component {
     
     this.myTextsList = null; //store texts list
  
-    this.modalData={ // store to display title on modal
+    this.textSelected={ // store to display title on modal
       id: null,
       title: null
     };
@@ -51,12 +50,15 @@ class MyTexts extends Component {
 
   onCloseModal = () => this.setState({isModalOpen: false});
   onTitleClick = (event) => {
-    this.modalData.title = event.currentTarget.title; //title of book
-    this.modalData.id = event.currentTarget.id; // WILL need to be utilized in routing
+    this.textSelected.title = event.currentTarget.title; //title of book
+    this.textSelected.id = event.currentTarget.id; // WILL need to be utilized in routing
     this.setState({isModalOpen: true});
   }
+  onToTextClick = () =>{
+    this.props.routeChange('typeTracerApp');
+    sessionStorage.ttTextSelected = JSON.stringify({id: this.textSelected.id, title: this.textSelected.title})
+  }
   render() {
-    console.log('myTexts',this.state.myTexts)
     const display = this.getCurrentDisplay()
     return (
       <div name='CatalogContainer'> 
@@ -64,23 +66,12 @@ class MyTexts extends Component {
         {(Array.isArray(this.state.myTexts) && this.state.myTexts.length !== 0) ? 
         display : 
         <NoTextsBanner routeChange={this.props.routeChange}/>}
-        <Modal open={this.state.isModalOpen} onClose={this.onCloseModal} center>
-          <div className='tc pa3'>
-            <h2>{'Start TypeTracing:'}</h2>
-            <h3 className='mb5'>{this.modalData.title}</h3>
-            <button 
-            style={{outline: 'none'}} 
-            className='f5 tc br-pill ph4 pv3 mb2 dib white bg-black bn pointer'
-            onClick={() => {
-              this.props.routeChange('typeTracerApp');
-              //id so we know which text to fetch in ttApp
-              sessionStorage.ttTextSelected = JSON.stringify({id: this.modalData.id, title: this.modalData.title})
-            }}
-            >
-              {'To Typetracer App'}
-            </button> {/*route to TypeTracerApplication page*/}
-          </div>
-       </Modal>
+        <ToTextModal 
+        title={this.textSelected.title} 
+        toTextClick={this.onToTextClick} 
+        open={this.state.isModalOpen} 
+        onClose={this.onCloseModal}
+        />
       </div> 
     );
   }
