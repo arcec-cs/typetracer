@@ -7,14 +7,14 @@
 @media screen and (min-width: 60em) {
   #titleCard{ 
     width: 22rem;
-    max-height:'20rem';
+    max-height:20rem;
   }
 }
 /* Custom Not Large -nl break point*/
 @media screen and (max-width: 60em) { 
   #titleCard{
     width:90%;
-    max-height:'20rem';
+    max-height:20rem;
   }
   .dn-nl{
     display:none;
