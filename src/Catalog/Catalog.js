@@ -86,12 +86,14 @@ class Catalog extends Component {
   
   render() {
     const display = this.getCurrentDisplay(); // conditionally render display acc this.
-    const isTitleCardList = (this.state.path !== 'authors') && (this.state.path !=='categories');
+    const display2 = this.state.path.includes('/') ? <span name='container' className={'mw8 center flex flex-wrap justify-between'}>{display}</span> : display; 
+    console.log('iscontSTy', this.state.path.includes('/'))
     return (
-      <div name='CatalogContainer'> 
-        <CatalogHeader onBrowseByClick = {this.onPathChange}/>
-        {isTitleCardList && <h1 id='titleListCat' className="f3 f2-l bold center mt0">{this.listTitle}:</h1> }
-        {display}
+      <div name='CatalogContainer' className='flex flex-column h-navOffset'> 
+        <CatalogHeader onBrowseByClick = {this.onPathChange} selected={this.state.path}/>
+        <div className='flex flex-wrap w-100 h-100 pr4-l' style={{overflowY: 'scroll'}}>
+            {display2}
+        </div>
         <ToTextModal 
         title={this.textSelected.title} 
         toTextClick={this.onToTextClick} 
