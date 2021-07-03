@@ -24,7 +24,7 @@ const BucketList = ({type, info, onItemClick}) => {
       onClick={onItemClick} 
       id={`${pathFirst}/${entry['id']}`}
       key={`${entry['id']}`} 
-      className='f3-l ph3 pv3 bb b--light-silver hover-light-red underline pointer'>
+      className='f3-l ph3 pv3 bb b--light-silver hover-light-red underline pointer bg-animate hover-bg-light-gray'>
         {entry[type]}
       </li>
     </>
