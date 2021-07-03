@@ -51,7 +51,7 @@ class Catalog extends Component {
     //check for error
     if(this.state.isError === true) return <h1 className='tc'>{'oops, something went wrong :('}</h1>
     //for api calls
-    const loader = <span className='tc'><Loader type="ThreeDots" color="#000000" height={80} width={80} timeout={20000}/></span>;
+    const loader = <span className='tc center'><Loader type="ThreeDots" color="#000000" height={80} width={80} timeout={20000}/></span>;
     //conditionally render content of the Catalog page based of path state;  
     const path = this.state.path; 
     if(path.includes('/')) //for buckets i.e specific author or category

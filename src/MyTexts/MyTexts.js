@@ -42,7 +42,7 @@ class MyTexts extends Component {
   }
 
   getCurrentDisplay(){
-    const loader = <span className='tc'><Loader type="ThreeDots" color="#000000" height={80} width={80} timeout={20000}/></span>;
+    const loader = <span className='tc center'><Loader type="ThreeDots" color="#000000" height={80} width={80} timeout={20000}/></span>;
     if(this.state.isError === true) return <h1 className='tc'>{'oops, something went wrong :('}</h1>
     if(this.state.myTexts) return <TitleCardList onTitleClick={this.onTitleClick} titleInfoArr={this.state.myTexts}/>;//check to see if contenten has loaded
       else return loader;
@@ -61,11 +61,14 @@ class MyTexts extends Component {
   render() {
     const display = this.getCurrentDisplay()
     return (
-      <div name='CatalogContainer'> 
+      <div name='CatalogContainer' className='flex flex-column h-navOffset'>
         <MyTextsHeader name={this.ttUser.name} date={this.ttUser.createdAt.slice(0,10)}/>
         {(Array.isArray(this.state.myTexts) && this.state.myTexts.length !== 0) ? 
-        display : 
-        <NoTextsBanner routeChange={this.props.routeChange}/>}
+        <div className='flex flex-wrap w-100 h-100 pr4-l' style={{overflowY: 'scroll'}}>
+          <span name='container' className={'mw8 center flex flex-wrap justify-between'}>{display}</span> 
+        </div>: 
+          <NoTextsBanner routeChange={this.props.routeChange}/>
+        }
         <ToTextModal 
         title={this.textSelected.title} 
         toTextClick={this.onToTextClick} 
