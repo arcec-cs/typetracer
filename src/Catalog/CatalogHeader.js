@@ -2,15 +2,17 @@ import React from 'react';
 import './CatalogHeader.css'
 
 // BucketList component used to make a list of categories or authors, the two "buckets" which Texts go in
-const CatalogHeader = ({onBrowseByClick}) => {
+const CatalogHeader = ({onBrowseByClick, selected}) => {
+  const isSelected = (id) => selected.includes(id) ?'underline fw9 i bg-moon-gray white' : 'bg-animate pointer hover-bg-gray hover-white'
+  const selectedText = (id, str) => selected.includes(id) ? `${str}` :  str
   return( 
-  <header className='bg-white black-80 tc pv4 avenir'>
-    <h1 id='catalogHeader' className='mt2 mb0 baskerville i fw1 f1 f-subheadline-l'>Catalog</h1>
+  <header className='pt2 pt3-ns tc black-80 avenir shadow-5'>
+    <h1 id='catalogHeader' className='mt2 mb0 baskerville i fw1'>Catalog</h1>
     <h2 className='mt2 mb0 f6 f5-l fw4 ttu tracked'>Browse By:</h2>
-    <nav id='browseByBar' className='bt bb tc center mt4'>
-      <a id='titles' onClick ={onBrowseByClick} className='f5 f4-ns link bg-animate black-80 hover-bg-near-black hover-white dib pa3 ph4-m ph5-l w-30 pointer'>Texts</a>
-      <a id='authors' onClick ={onBrowseByClick} className='f5 f4-ns link bg-animate black-80 hover-bg-near-black hover-white dib pa3 ph4-m ph5-l w-30 pointer'>Authors</a>
-      <a id='categories' onClick ={onBrowseByClick} className='f5 f4-ns link bg-animate black-80 hover-bg-near-black hover-white dib pa3 ph4-m ph5-l w-30 pointer'>Categories</a>
+    <nav id='browseByBar' className='bt tc center mt3'>
+      <a id='titles' onClick ={onBrowseByClick} className={`f5 f4-ns link black-80 dib pa3 ph4-m ph5-l w-30 ${isSelected('titl')}`}>{'Texts'}</a>
+      <a id='authors' onClick ={onBrowseByClick} className={`f5 f4-ns link black-80 dib pa3 ph4-m ph5-l w-30 ${isSelected('author')}`}>{'Authors'}</a>
+      <a id='categories' onClick ={onBrowseByClick} className={`f5 f4-ns link black-80 dib pa3 ph4-m ph5-l w-30 ${isSelected('categ')}`}>{'Categories'}</a>
     </nav>
   </header> 
 
