@@ -1,46 +1,46 @@
 import React from 'react';
 import jwt from 'jsonwebtoken'
+//import validator from 'email-validator';
+var validator = require("email-validator");
 
 class RegisterSignIn extends React.Component {
   constructor(props) {
     super(props);
-
-    this.formInfo={
+    
+    this.state= {
       email:'',
       password:'',
-      name:''
-    };
-
-    this.state={
+      name:'',
       isSignInForm: true
     };
   }
 
-  onOtherFormClick = () => {
-    this.setState(state => ({isSignInForm: !state.isSignInForm})); //falisfy value
-  }
-
-  onEmailChange=(event)=>{
-    this.formInfo.email = event.currentTarget.value;
-  }
-
-  onPasswordChange=(event)=>{
-    this.formInfo.password = event.currentTarget.value;
-    console.log(this.formInfo.password)
-  }
-
-  onNameChange=(event)=>{
-    this.formInfo.name = event.currentTarget.value;
-  }
-
+  onOtherFormClick = () => //falisfy value, reset form
+    this.setState(state => ({isSignInForm: !state.isSignInForm, email: '', password: '', name: ''}));
+  
+  onEmailChange=(event) => this.setState({email: event.currentTarget.value})
+  
+  onPasswordChange=(event) => this.setState({password: event.currentTarget.value})
+  
+  onNameChange=(event) => this.setState({name: event.currentTarget.value});
+  
   onSubmit = () => {
-    const path = (this.state.isSignInForm) ? 'signIn' : 'register';
+    //simple front end test to catch most obvious errors
+    if(!/^\S+@\S+$/.test(this.state.email)) { alert('Please Enter a Valid email'); return 0; }
+    
+    //max/min password length/ front end check checking here and not restricting maxLength to not confuse user bc dots.
+    if(this.state.password.length > 45 || this.state.password.length < 8) {
+      alert('Your Password must contain in-between 8 and 45 characters'); 
+      return 0;
+    }
     //set body
     const body = {
-      email: this.formInfo.email,
-      password: this.formInfo.password,
+      email: this.state.email,
+      password: this.state.password,
     }
-    if (!this.state.isSignInForm) body.name = this.formInfo.name; // register form
+    if (!this.state.isSignInForm) body.name = this.state.name; //set register form
+    //fetch 
+    const path = (this.state.isSignInForm) ? 'signIn' : 'register';
     fetch(`http://localhost:3005/${path}`, { //fetch jwt token
       method: 'post',
       headers: {'Content-Type': 'application/json'},
@@ -105,6 +105,8 @@ class RegisterSignIn extends React.Component {
                     className='pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100 hover-black' 
                     type='text'
                     onChange={this.onNameChange}
+                    maxLength='40'
+                    value={this.state.name}
                   />
                 </div>
               }
@@ -114,6 +116,8 @@ class RegisterSignIn extends React.Component {
                   className='pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100 hover-black' 
                   type='email'
                   onChange={this.onEmailChange}
+                  maxLength='150'
+                  value={this.state.email}
                 />
               </div>
               <div className='mv3'>
@@ -122,6 +126,8 @@ class RegisterSignIn extends React.Component {
                   className='b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100 hover-black' 
                   onChange={this.onPasswordChange} 
                   type='password'
+                  maxLength='50'
+                  value={this.state.password}
                 />
               </div>
             </fieldset>
