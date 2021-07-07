@@ -14,7 +14,8 @@ class TypeTracerApp extends Component {
     super(props);
 
     //used on login/not login. tId made state for onSaveProgress
-    this.tId = this.title = undefined
+    this.tId = undefined;
+    this.title = '';
 
     //needed when logged in/ made state for onSaveProgress
      this.uId = this.token = undefined;
@@ -49,7 +50,7 @@ class TypeTracerApp extends Component {
   }
 
   async initTypeTracer() {
-    //get id and title of text selected
+    //get id and title of text selected,
     const textSelected = JSON.parse(sessionStorage.ttTextSelected);
     const tId = this.tId = textSelected.id;
     this.title = textSelected.title//.slice(0,25) + '...';
