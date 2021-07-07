@@ -204,9 +204,15 @@ class TypeTracerApp extends Component {
           this.onProgressSave();
         } 
       }   
-   
+      this.numOfPages = Object.keys(this.text).length; // so we know when to stop indexing
+      //IF END OF TEXT
+      if(this.furthestIndexStore.page > this.numOfPages ){ //on Finished text, furthestpage is out of bounds, will never trigger furthest page anymore
+        // reset indexes from furthest indexes to already completed page indexes
+        this.indexer.para = this.indexer.sen = this.indexer.c_start = 0; //dont need this, but here for saftey.
+        this.indexer.page = this.indexer.page -1 ; 
+      } 
       //Build Current page and render it
-      this.furthestPageBuilder();
+      this.toIndexerPage();
       //console.log(this.textOnPage)
       this.setState({}); //to get to re-render with initState
     }catch(err){console.log(err); this.setState({isInitError:true})}
@@ -301,7 +307,7 @@ class TypeTracerApp extends Component {
       //EO boolean
       const isEOPara = (indexer.sen == indexEOPara); //at the last sentence of para
       const isEOPage = (indexer.para == indexEOPage); // at last paragraph of page
-      
+
       //Check Cases: we always set indexes, if on furthest page we also append to the page.
       if(!isEOPara) { //end of sentence in a paragraph but not the last one
         //console.log("EOS")
@@ -317,6 +323,18 @@ class TypeTracerApp extends Component {
       } 
       else if(isEOPara && !isEOPage) { //at last sentence in paragraph
         //console.log("EOPara")
+        //IF END OF TEXT END OF TEXT CHECK
+        if(indexer.page === this.numOfPages && indexEOPage-1 === indexer.para){ //current text has [] at end of it
+          //reset indexes to beginning of page as an already typed page is
+          indexer.para = indexer.sen = indexer.c_start = 0; 
+          // fIndex out ouf bounds on pages, means that the book has ended
+          if( fIndex.page === indexer.page) { // if first time completeing last page
+          fIndex.c_start = fIndex.sen = fIndex.para = 0
+          fIndex.page = this.numOfPages + 1;
+          this.onProgressSave() 
+          }
+          return 0;
+        } 
         indexer.para = indexer.para + 1; //increment EO 
         //reset indexes
         indexer.c_start = indexer.sen = 0; 
@@ -465,13 +483,13 @@ class TypeTracerApp extends Component {
           />
           {page}
           <InputBar
-            hasNextButton={indexer.page < this.furthestIndexStore.page}
+            hasNextButton={indexer.page < this.furthestIndexStore.page && indexer.page < this.numOfPages}
             hasLastButton={indexer.page != 1}
             onButtonClick={this.onPageFlip} 
             textInput={this.state.textInput} 
             onTextInputChange={this.onTextInputChange}
             currentPage={indexer.page}
-            furthestPage={this.furthestIndexStore.page}
+            furthestPage={this.numOfPages}
             onPageNumberInputHandler={this.onPageNumberInputHandler}
           />
         </div>
