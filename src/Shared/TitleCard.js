@@ -36,7 +36,7 @@ const TitleCard = ({title, author, category,  pages, pageProgress,  id, authorId
           </li>
           <li className={`pv1`}>
             { (itemClick) ? <span className=''><span className={'b'}>{`Pages: `}</span> {`${pages}`}</span>
-              : <span><span className={'b'}>{`Pages Completed: `}</span>{`${pageProgress}/${pages}`}</span>
+              : <span><span className={'b'}>{`Pages Completed: `}</span>{`${pageProgress-1}/${pages}`}</span>
             }
           </li>
           { (lastAccessed) && 
