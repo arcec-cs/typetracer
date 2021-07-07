@@ -56,7 +56,8 @@ class RegisterSignIn extends React.Component {
       }else { // notify user for failure
         response.json().then(e => alert(e));
       }
-    })
+    })//network error, either Server is down or user isnt connected to the internet. 
+    .catch(()=> alert("We are having trouble reaching Typetracer, :( please check your internet connection"));
   }
 
   accessTokenHandler(resObj) {
