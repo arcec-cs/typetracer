@@ -12,12 +12,13 @@ const InputBar = ({textInput,
   onButtonClick ,
   currentPage,
   furthestPage,  
-  onPageNumberInputHandler
+  onPageNumberInputHandler,
+  canTypeText
 }) => {
   
   return(  
     <section className = 'flex justify-between pt3 mt2 mb3 bt-double f6 f5-ns'>
-       <TextInput value={textInput} textInputChange={onTextInputChange}/>
+       <TextInput value={textInput} textInputChange={onTextInputChange} canType={canTypeText}/>
         <span className='w-33 tc self-center'>
           {`Page#: `}
           <PageNumberInput inputHandler={onPageNumberInputHandler} placeHolder={currentPage}/>

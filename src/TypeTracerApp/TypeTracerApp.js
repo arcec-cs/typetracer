@@ -491,6 +491,7 @@ class TypeTracerApp extends Component {
             currentPage={indexer.page}
             furthestPage={this.numOfPages}
             onPageNumberInputHandler={this.onPageNumberInputHandler}
+            canTypeText={(this.textOnPage)? true: false}
           />
         </div>
       </div>
