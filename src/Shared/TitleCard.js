@@ -6,6 +6,8 @@ const TitleCard = ({title, author, category,  pages, pageProgress,  id, authorId
   const clickableStyle = 'underline pointer hover-light-red';
   //myTexts does not have itemClick
   const getClassName = (bucket) => itemClick ? type && isTypeX(bucket) ? '' : clickableStyle :''; 
+  // for very long tiles longer than 168 chars
+  // if (title.length > 168)  title = title.slice(0,150) + '...';
   return ( 
     <article id='titleCard' className='flex center mv4'>
       <div className='flex w-100'>
@@ -33,8 +35,8 @@ const TitleCard = ({title, author, category,  pages, pageProgress,  id, authorId
             </span> 
           </li>
           <li className={`pv1`}>
-            { (itemClick) ? <span className=''><span className={'b'}>{`Pages:`}</span> {`${pages}`}</span>
-              : <span><span className={'b'}>{`Pages Completed:`}</span>{`${pageProgress}/${pages}`}</span>
+            { (itemClick) ? <span className=''><span className={'b'}>{`Pages: `}</span> {`${pages}`}</span>
+              : <span><span className={'b'}>{`Pages Completed: `}</span>{`${pageProgress}/${pages}`}</span>
             }
           </li>
           { (lastAccessed) && 

@@ -63,13 +63,72 @@ class TypeTracerApp extends Component {
     const fetchAndStoreText = () => 
       fetch(`http://localhost:3005/text/${tId}`)
       .then(res=> {
-        if(res.ok) return res.json();
+        this.bytes = Number(res.headers.get('content-length')) + 2000;
+        // if(res.ok) return res.json();
+        console.log('FETCH TEXT METHOD')
+        if(res.ok) return res.json() // 2000 byte buffer
         else throw new Error('unable to fetch text'); //worst case
       })
       .then(text => {
-        localStorage[`ttText${this.tId}`] = text;// store here so we dont have to restringify
-        return JSON.parse(text);
-      })// set text
+        console.log(" ADDING TO LS")
+        try{
+          //check for SMIndex ,if it exsists append new text/ if not create with new text
+          if(localStorage.storageManagmentIndex) { // append to index
+            let SMI = JSON.parse(localStorage.storageManagmentIndex);
+            SMI[tId] = {
+              lastAccessed: Date.now().toString(),
+              bytes: this.bytes.toString()
+            }
+            localStorage.storageManagmentIndex = JSON.stringify(SMI);
+          } 
+          else { // dne create index
+            localStorage.storageManagmentIndex= JSON.stringify({
+            [tId]:{
+              lastAccessed: Date.now().toString(),
+              bytes: this.bytes.toString()
+            }
+            });
+          }
+          localStorage[`ttText${this.tId}`] = text; //attempt to add text to local storage
+          //console.log('Added', this.tId)
+          return JSON.parse(text); //SMIndex success, return text
+        }catch { // local storage is full
+          //console.log("LS IS FULL! ALLCATING SPACE")
+          // user SMI to remove the texts in localStorage with the oldest access times until there is enough space
+          const SMI = JSON.parse(localStorage.storageManagmentIndex); // no need check, if error here then corrupted
+          const spaceNeeded = this.bytes;
+          let spaceMade = 0; 
+          const sMIndexArr = Object.entries(SMI); //[ [tid,{la:,bytes}],[...],... }]
+          const sortedAccessSMI =  sMIndexArr.sort((a, b) => (a[1].lastAccessed > b[1].lastAccessed) ? 1 : -1);// sort by lastAccessed decending
+          //console.log("unsorted",sMIndexArr)
+          //console.log('sorted',sortedAccessSMI)
+          for(let i=0; spaceMade < spaceNeeded; i++) { //remove form LS until enough space
+            const textRemovingBytes = sortedAccessSMI[i][1].bytes;
+            delete SMI[sortedAccessSMI[i][0]]; //remove from index [i][0] is prop name
+            console.log("NUM REMOVED", sortedAccessSMI[i][0])
+            localStorage.removeItem(`ttText${sortedAccessSMI[i][0]}`); //if smi dne will just give undefined
+            spaceMade = spaceMade + textRemovingBytes;
+          }
+          localStorage.storageManagmentIndex = JSON.stringify(SMI); //update to current SMI
+          try { //space made for text with smi values
+            //console.log('SMI SPACE APLLIED, TRYING TO ADD TO LS')
+            localStorage[`ttText${this.tId}`] = text; //attempt to add
+            return JSON.parse(text);
+          }
+          catch { // if storageManagmentIndex is corrupted and still not enough space, use naive solution
+            //console.log("SMI FAILURE! DUMP LS")
+            localStorage.clear(); //just clear so we can have an okay SMI eventually
+            localStorage[`ttText${this.tId}`] = text; //add
+            localStorage.storageManagmentIndex= JSON.stringify({
+              [tId]:{
+                lastAccessed: Date.now().toString(),
+                bytes: this.bytes.toString()
+              }
+              });
+            return JSON.parse(text); //SMIndex success, return text
+          }
+        }
+      })
   
     const fetchProgress = () => 
       fetch(`http://localhost:3005/myTexts/${uId}/progress/${tId}`, {headers:{'Authorization': `bearer ${this.token}`}})
@@ -103,11 +162,26 @@ class TypeTracerApp extends Component {
           this.text = JSON.parse(localStorage[`ttText${tId}`]);
           this.furthestIndexStore = await fetchProgress()
           this.indexer = Object.assign({}, this.furthestIndexStore)
+          //set Storage Management Index last accessed so we know 
+          if(localStorage.storageManagmentIndex){
+            const SMI =  JSON.parse(localStorage.storageManagmentIndex)
+            SMI[tId].lastAccessed =  Date.now().toString();
+            localStorage.storageManagmentIndex = JSON.stringify(SMI);
+          }
         }
         setSaveProgressInterval(); //set interval to update logged in user progress in the backend
       }else {//NOT Logged In
         if(!localStorage[`ttText${tId}`]) {this.text = await fetchAndStoreText(); console.log(`NOT logged In  NOT in local storage`)} //NOT in local storage 
-        else {this.text = JSON.parse(localStorage[`ttText${tId}`]); console.log("NOT logged In in local storage")};//in local storage
+        else {//in local storage
+          //set Storage Management Index last accessed so we know 
+          if(localStorage.storageManagmentIndex){
+            const SMI =  JSON.parse(localStorage.storageManagmentIndex)
+            SMI[tId].lastAccessed =  Date.now().toString();
+            localStorage.storageManagmentIndex = JSON.stringify(SMI);
+          }
+          this.text = JSON.parse(localStorage[`ttText${tId}`]); 
+          console.log("NOT logged In in local storage")
+        };
       }
     
       //Special case:Check for logging in from modal, so progress is saved for signedin/registerd users
