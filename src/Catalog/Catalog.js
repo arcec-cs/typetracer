@@ -32,7 +32,10 @@ class Catalog extends Component {
     if(!this.cache[path])this.fetchPathContent() 
   }  
   componentDidUpdate() { 
-    if(this.shouldFetch === true){ this.fetchPathContent();}
+    if(this.shouldFetch === true) {
+      this.shouldFetch = false; //starting fetch request, reset.
+      this.fetchPathContent();
+    }
   }
 
   fetchPathContent(){
@@ -40,16 +43,15 @@ class Catalog extends Component {
       fetch(`http://localhost:3005/catalog/${path}`)
       .then(res=> res.json())
       .then(data => {
-        this.cache[path] = data;
-        this.shouldFetch = false; 
+        this.cache[path] = data; 
         this.setState({})//re-render with fetched data
-      })
-      .catch(() => this.setState({isError: true})); //there was an error, reload page
+      })//network failure, if statment so error message only thrown for current path bc async 
+      .catch((e) => {if(path === this.state.path)this.setState({isError: true})}); 
   }
 
   getCurrentDisplay(){
     //check for error
-    if(this.state.isError === true) return <h1 className='tc'>{'oops, something went wrong :('}</h1>
+    if(this.state.isError === true) return <h1 className='tc center'>{'oops, something went wrong :('}</h1>
     //for api calls
     const loader = <span className='tc center'><Loader type="ThreeDots" color="#000000" height={80} width={80} timeout={20000}/></span>;
     //conditionally render content of the Catalog page based of path state;  
