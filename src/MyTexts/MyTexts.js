@@ -34,7 +34,7 @@ class MyTexts extends Component {
     const userInfo = JSON.parse(sessionStorage.ttUser)
     const token = userInfo.accessTokenInfo.accessToken;
     const uId = userInfo.uId;
-    fetch(`http://localhost:3005/myTexts/${uId}`, {headers:{'Authorization': `bearer ${token}`}})
+    fetch(`http://localhost:3005/myTexts/`, {headers:{'Authorization': `bearer ${token}`}})
     .then(res => res.json())
     .then(data => {this.setState({myTexts: data}); console.log(data)})
     .catch(e => this.setState({isError: true})); //there was an error, reload page
