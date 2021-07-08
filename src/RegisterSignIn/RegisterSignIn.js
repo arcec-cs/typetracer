@@ -1,7 +1,6 @@
 import React from 'react';
 import jwt from 'jsonwebtoken'
-//import validator from 'email-validator';
-var validator = require("email-validator");
+
 
 class RegisterSignIn extends React.Component {
   constructor(props) {
@@ -41,7 +40,7 @@ class RegisterSignIn extends React.Component {
     if (!this.state.isSignInForm) body.name = this.state.name; //set register form
     //fetch 
     const path = (this.state.isSignInForm) ? 'signIn' : 'register';
-    fetch(`http://localhost:3005/${path}`, { //fetch jwt token
+    fetch(`https://guarded-mesa-72235.herokuapp.com/${path}`, { //fetch jwt token
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(body)

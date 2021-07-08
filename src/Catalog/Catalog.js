@@ -40,7 +40,7 @@ class Catalog extends Component {
 
   fetchPathContent(){
     const path = this.state.path;
-      fetch(`http://localhost:3005/catalog/${path}`)
+      fetch(`https://guarded-mesa-72235.herokuapp.com/catalog/${path}`)
       .then(res=> res.json())
       .then(data => {
         this.cache[path] = data; 

@@ -62,7 +62,7 @@ class TypeTracerApp extends Component {
     }
     
     const fetchAndStoreText = () => 
-      fetch(`http://localhost:3005/text/${tId}`)
+      fetch(`https://guarded-mesa-72235.herokuapp.com/text/${tId}`)
       .then(res=> {
         this.bytes = Number(res.headers.get('content-length')) + 2000;
         // if(res.ok) return res.json();
@@ -132,7 +132,7 @@ class TypeTracerApp extends Component {
       })
   
     const fetchProgress = () => 
-      fetch(`http://localhost:3005/myTexts/progress/${tId}`, {headers:{'Authorization': `bearer ${this.token}`}})
+      fetch(`https://guarded-mesa-72235.herokuapp.com/myTexts/progress/${tId}`, {headers:{'Authorization': `bearer ${this.token}`}})
       .then(res=> {
         if(res.ok) return res.json();
         else {console.log("error"); throw new Error('unable to fetch text');}//worst case
@@ -142,7 +142,7 @@ class TypeTracerApp extends Component {
       this.progressTimerId = setInterval(() => this.onProgressSave(), 30000); 
     
     const addToMyTexts = () => //Makes Record, do here to ensure sequence between record making and progress fetching, progress in record. 
-      fetch(`http://localhost:3005/myTexts/${tId}`, {method: 'POST', headers:{'Authorization': `bearer ${token}`}})
+      fetch(`https://guarded-mesa-72235.herokuapp.com/myTexts/${tId}`, {method: 'POST', headers:{'Authorization': `bearer ${token}`}})
       .then(res=> { if(!res.ok) throw new Error('unable to add to MyTexts'); }); //worst case
     
     try{
@@ -242,7 +242,7 @@ class TypeTracerApp extends Component {
     //if progress was made save it 
     if(JSON.stringify(this.furthestIndexStore) !== JSON.stringify(this.progressLastSent)) {
       options.body =  JSON.stringify({progress: this.furthestIndexStore}) //set progress a time of call
-      fetch(`http://localhost:3005/myTexts/progress/${this.tId}`, options)
+      fetch(`https://guarded-mesa-72235.herokuapp.com/myTexts/progress/${this.tId}`, options)
       .then(res=> {
         if(res.ok) {
           setSaveStatusIndicator(`${auto()}Saved`)
