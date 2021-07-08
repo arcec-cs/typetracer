@@ -490,7 +490,7 @@ class TypeTracerApp extends Component {
             textInput={this.state.textInput} 
             onTextInputChange={this.onTextInputChange}
             currentPage={indexer.page}
-            furthestPage={(this.furthestIndexStore.page<this.numOfPages)? this.furthestIndexStore.page: this.numOfPages}
+            furthestPage={this.numOfPages?(this.furthestIndexStore.page<this.numOfPages)? this.furthestIndexStore.page: this.numOfPages: '1'}
             onPageNumberInputHandler={this.onPageNumberInputHandler}
             canTypeText={(this.textOnPage)? true: false}
           />
