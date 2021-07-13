@@ -1,7 +1,9 @@
 import React from 'react';
 
 const TextInput = ({value, textInputChange, styles, canType}) => {
-  const maxLength = () => canType ? '1000' : '0';  
+  const maxLength = () => canType ? '1000' : '0';
+  const scrollToCurrentWord = () => //check current word not null i.e at start of app
+    document.getElementById('currentWord') && document.getElementById('currentWord').scrollIntoView({behavior: 'smooth'});  
   return(  
     <input 
       autoFocus
@@ -9,9 +11,11 @@ const TextInput = ({value, textInputChange, styles, canType}) => {
       value={value} 
       onChange={textInputChange}
       style={styles}
-      maxLength = {maxLength()}  
+      maxLength = {maxLength()} 
+      onFocus={scrollToCurrentWord} 
+      onTouchEnd={scrollToCurrentWord}
     />
   );
 };
-
+//document.getElementById('currentWord').scrollIntoView({behavior: "smooth", alignToTop: "true"})
 export default TextInput;

@@ -12,8 +12,8 @@ const Sentence = ({text, isCorrect, charStart, charEnd}) => {
     charList = charArray.map((char, ind) => {
       // marker for last char in the current word 
       if(ind == charEnd)  {
-        if (isCorrect) return <span key={ind} className={'underline bg-light-green'}>{char}</span>
-        else return <span key={ind} className={'strike underline bg-light-red'}>{char}</span>
+        if (isCorrect) return <span id={'currentWord'} key={ind} className={'underline bg-light-green'}>{char}</span>
+        else return <span id={'currentWord'} key={ind} className={'strike underline bg-light-red'}>{char}</span>
       }
       //styling for typed letters current word
       if(ind >= charStart && ind <= charEnd) {

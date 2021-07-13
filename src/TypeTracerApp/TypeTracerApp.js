@@ -7,7 +7,9 @@ import RegisterSignIn from '../RegisterSignIn/RegisterSignIn'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Loader from "react-loader-spinner";
 import 'react-responsive-modal/styles.css';
-import { Modal } from 'react-responsive-modal'; 
+import { Modal } from 'react-responsive-modal';
+import * as smoothscroll  from 'smoothscroll-polyfill';
+smoothscroll.polyfill(); //for safari
 
 class TypeTracerApp extends Component {
   constructor(props) {
@@ -47,6 +49,17 @@ class TypeTracerApp extends Component {
 
   componentWillUnmount(){
     clearInterval(this.progressTimerId); //clean up
+  }
+
+  componentDidUpdate() { //to scroll on each word because we do not know where a paragraph could wrap depending on screensize/zoom
+    if(this.state.textInput === '') {
+      let options = {behavior: 'smooth'} //smooth scroll provides good UX when typing
+      if(this.traversedToNewPage) {//smooth scrolling will confuse user on new page, looks like scrolling up same page
+        options = {};//get rid of smooth
+        this.traversedToNewPage = false;//reset flag 
+      }
+      document.getElementById('currentWord').scrollIntoView(options); 
+    }
   }
 
   async initTypeTracer() {
@@ -278,6 +291,7 @@ class TypeTracerApp extends Component {
 
   nextWord = (input) => {
     this.setIndexes(input);
+    //document.getElementById('currentWord').scrollIntoView({behavior: "smooth", alignToTop: "true"})
     this.setState({textInput: ''});
   }
 
@@ -409,7 +423,8 @@ class TypeTracerApp extends Component {
       } else { //already typed whole page, render whole page and start at begining
         this.textOnPage = this.text[indexer.page];
         indexer.c_start = indexer.sen = indexer.para = 0; //reset indexes to beginning of page 
-      } 
+      }
+      this.traversedToNewPage = true;  
       this.setState({textInput: ''});//ReRender new page, reset text input
   }
 
