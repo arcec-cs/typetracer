@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect} from 'react';
 import Paragraph from './Paragraph';
+import * as smoothscroll  from 'smoothscroll-polyfill';
+smoothscroll.polyfill(); //for safari
 
 // We want our page to render the current state of the page as we are typing 
 // text- shall be the whole text of the page
@@ -33,6 +35,9 @@ const Page = ({text, isCorrect, paraCur, senCur, charStart, charEnd}) => {
     if(hasApi) window.visualViewport.addEventListener('resize', () => handleResize());
     else window.addEventListener('resize', () => handleResize());
 
+    //for ios, scroll to top of page once mounted, ensures top of page after load unlike input autofocus in TextInput
+    document.getElementById('NavBar').scrollIntoView({behavior: 'smooth'}); //NEW
+    
     return () => hasApi ? //clean up on unmount
       window.visualViewport.removeEventListener('resize', () => handleResize()) :
       window.removeEventListener('resize', () => handleResize());

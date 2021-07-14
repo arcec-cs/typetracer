@@ -57,8 +57,8 @@ class TypeTracerApp extends Component {
       if(this.traversedToNewPage) {//smooth scrolling will confuse user on new page, looks like scrolling up same page
         options = {};//get rid of smooth
         this.traversedToNewPage = false;//reset flag 
-      }
-      document.getElementById('currentWord').scrollIntoView(options); 
+      }//check bc got a componentDidUpdate on refresh once and app broke
+      (document.getElementById('currentWord')) && document.getElementById('currentWord').scrollIntoView(options);
     }
   }
 
