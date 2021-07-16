@@ -2,7 +2,11 @@ import React from 'react';
 
 const NextPageButton = ({onClick}) => {
   return(  
-    <button id='Next' onClick={onClick} className="f5 no-underline black bg-animate hover-bg-black hover-white inline-flex items-center pa2 ba border-box">
+    <button 
+    id='Next' 
+    onClick={onClick} 
+    className="f5 no-underline black bg-animate hover-bg-black-no-focus hover-white-no-focus pointer inline-flex items-center pa2 ba border-box"
+    >
       <span className=" dn di-ns pr1">Next</span>
       <svg className="w1" data-icon="chevronRight" viewBox="0 0 32 32" style={{fill:"currentcolor"}}>
         <title>chevronRight icon</title>

@@ -18,7 +18,7 @@ const Paragraph = ({text, senCur, isCorrect, charStart, charEnd}) => {
   });
   
   return (
-    <p className = {'center measure lh-copy indent-custom red-m green-l f6 f5-m f4-l mb mb-m mb-l'}  >
+    <p className = {'center measure lh-copy indent-custom red-m green-l f5 f4-l mb mb-m mb-l'}  >
       {sentenceList}
     </p>
   )

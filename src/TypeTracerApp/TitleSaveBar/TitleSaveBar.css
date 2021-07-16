@@ -19,6 +19,12 @@
 #saveStatus{ 
   width: 2.5rem;
 }
+.hover-bg-black-no-focus:hover {
+  background-color: #000;
+}
+.hover-white-no-focus:hover{
+  color:white;
+}
 
 /* media queries that match Tachyons -m, -l  breakpoints to implement custom classes when necessary*/
 @media screen and (min-width: 30em) and (max-width: 60em) {
@@ -39,6 +45,8 @@
   /*50% fixed height of container element*/
   #title{
     max-width:13.125rem;
+    margin-top: 3px;
+    margin-bottom: 3px;
   };
 }
 

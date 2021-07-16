@@ -12,13 +12,13 @@ const TitleSaveBar = ({title, progressSave, isSaving, saveStatus, animationRefre
   const isInitialRender = (isSaving === undefined && animationRefresher === undefined);
   if(!isInitialRender){
     if(isSaving) saveIndicator = <Loader type='ThreeDots' color='#00BFFF' height={25} width={25}/>
-    else if(!animationRefresher) saveIndicator = <span className = {'hideMe'}>{`${saveStatus}`}</span>
-    else if (animationRefresher) saveIndicator = <span className = {'hideMe2'}>{`${saveStatus}`}</span>
+    else if(!animationRefresher) saveIndicator = <span className = {'hideMe'}>{`${saveStatus}`}</span> //animation refreshertoggles between true and false
+    else if (animationRefresher) saveIndicator = <span className = {'hideMe2'}>{`${saveStatus}`}</span>//to switch between cssAnimations refreshing it
   }
   
   return (
     <div name='container' className='flex justify-between content-center bb-double mb2 pb2'>
-      <span id="title" className='i fw3 mr2 title-overflow f6 f5-l title self-center'>{`${title}`}</span>
+      <span id="title" className='i fw3 mr2 title-overflow f5 f5-l title self-center pv2'>{`${title}`}</span>
       <div name='placeholder'></div>
       <div className = 'flex'>
         <span id='saveStatus' className={`self-center i fw3 ph3-ns ph2 tc ${sSColor()}`}>
@@ -27,7 +27,7 @@ const TitleSaveBar = ({title, progressSave, isSaving, saveStatus, animationRefre
         <button 
         id='Next' 
         onClick={() => progressSave(true)} 
-        className='f5 black bg-animate hover-bg-black hover-white inline-flex items-center pa2 ba pointer self-center'
+        className='f5 black bg-animate hover-bg-black-no-focus hover-white-no-focus inline-flex items-center pa2 ba pointer self-center'
         >
           <span className='dn di-ns pr1'>{'Save'}</span>
           <svg className='center' height='18px' viewBox='0 0 24 24' width='18px' fill='currentColor'>

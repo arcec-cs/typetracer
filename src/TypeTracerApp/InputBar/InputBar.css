@@ -1,3 +1,9 @@
 .bt-double {
   border-top: 4px double #999;
 }
+.hover-bg-black-no-focus:hover {
+  background-color: #000;
+}
+.hover-white-no-focus:hover{
+  color:white;
+}
