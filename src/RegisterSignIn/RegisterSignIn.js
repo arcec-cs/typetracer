@@ -1,5 +1,6 @@
 import React from 'react';
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
+import BetaSignInCard from './BetaSignInCard'; 
 
 
 class RegisterSignIn extends React.Component {
@@ -139,6 +140,9 @@ class RegisterSignIn extends React.Component {
               />
               <p onClick={this.onOtherFormClick} className=' underline f5 link dim black db pointer dib'>{`${otherForm}`}</p>
             </div>
+          {(this.state.isSignInForm) &&  
+            <BetaSignInCard click={()=>this.setState({email:'test@test.com', password:'password'})}/>
+          }   
           </div>
         </main>
       </article>
