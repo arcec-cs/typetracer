@@ -10,10 +10,10 @@ const PageNumberInput = ({inputHandler, placeHolder}) => {
   return( 
     <form onSubmit={inputHandler} className='dib' id='PageNumberInput'> 
       <input
+      id='pageNumberInput'
       className={"input-reset ba b--black-20 db mw2 border-box dib"} 
       onBlur={inputHandler}
       onFocus={() => isIOS ? IOSKbHandler() : 0}
-      style={{maxWidth: "2.25rem", width:"2.25rem"}}
       maxLength='4'
       placeholder ={placeHolder}
       defaultValue=''

@@ -177,11 +177,13 @@ class TypeTracerApp extends Component {
         this.text = text;
         this.furthestIndexStore = progress
         this.indexer = Object.assign({}, this.furthestIndexStore)
+        this.progressLastSent = Object.assign({}, this.furthestIndexStore); //set so we know not to autosave first save iteration
         } else { //In local storage
           console.log("logged In in local storage")
           this.text = JSON.parse(localStorage[`ttText${tId}`]);
           this.furthestIndexStore = await fetchProgress()
           this.indexer = Object.assign({}, this.furthestIndexStore)
+          this.progressLastSent = Object.assign({}, this.furthestIndexStore); //set so we know not to autosave first save iteration
           //set Storage Management Index last accessed so we know 
           if(localStorage.storageManagmentIndex){
             const SMI =  JSON.parse(localStorage.storageManagmentIndex)

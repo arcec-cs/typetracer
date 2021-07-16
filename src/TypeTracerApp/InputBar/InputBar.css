@@ -7,3 +7,7 @@
 .hover-white-no-focus:hover{
   color:white;
 }
+/* using important to make sure it gets applied on ios */
+#pageNumberInput {
+   width:"2.25rem" !important
+}

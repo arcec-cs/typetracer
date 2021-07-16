@@ -26,28 +26,30 @@
   color:white;
 }
 
+/*50% fixed height of container element*/
+#title{
+  max-width:13.125rem;
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
 /* media queries that match Tachyons -m, -l  breakpoints to implement custom classes when necessary*/
 @media screen and (min-width: 30em) and (max-width: 60em) {
   /*70% fixed height of container element*/
   #title{
     max-width: 21rem;
+    margin-top: 3px;
+    margin-bottom: 3px;
   }
 }
 
 @media screen and (min-width: 60em) {
    /*70% fixed height of container element*/
   #title {
-    max-width:26.25rem 
-  }
-}
-
-@media screen and (max-width: 30em) { 
-  /*50% fixed height of container element*/
-  #title{
-    max-width:13.125rem;
+    max-width:26.25rem;
     margin-top: 3px;
-    margin-bottom: 3px;
-  };
+    margin-bottom: 3px; 
+  }
 }
 
 /* hideMe and hideMe2 because in order to re-run animations one must re render html dom node */

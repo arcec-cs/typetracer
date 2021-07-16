@@ -65,7 +65,7 @@ class RegisterSignIn extends React.Component {
     const payload = jwt.decode(accessToken)
     console.log("P", payload)
     const accessTokenExpTime = (payload.exp * 1000 - Date.now());
-    const accessTokenExpWarningTime = accessTokenExpTime - 5000; //give a warining about logout 
+    const accessTokenExpWarningTime = accessTokenExpTime - 15000; //give a warining about logout 
     //set in session storage
     sessionStorage.ttUser = JSON.stringify({
       uId: payload.user.id,
@@ -81,7 +81,7 @@ class RegisterSignIn extends React.Component {
           this.props.signOut(); //Sign user out since Access token has expired          
           }, accessTokenExpTime),
         accessWarning: setTimeout(()=> {
-          alert("Your Session will end in 5 Minutes, Please Sign Out then Sign In to Renew your session :)");
+          alert("Your Session will end in 15 Minutes, Please Sign Out then Sign In to Renew your session :)");
         }, accessTokenExpWarningTime)
       }
     });
