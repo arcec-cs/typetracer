@@ -35,6 +35,8 @@ class TypeTracerApp extends Component {
     this.indexer = {page: 1, para: 0, sen: 0, c_start: 0}; //keeps track of typing postion in book
     this.isInputCorrect = true; // says if textInput matches expected input, not state bc changes before & with textInput state already
     
+    //Check If IOS for scrolling specific behavior
+    this.isIOS = ('GestureEvent' in window);
     //this.saveId=1;
     this.state = { 
       textInput: '',
@@ -51,14 +53,18 @@ class TypeTracerApp extends Component {
     clearInterval(this.progressTimerId); //clean up
   }
 
-  componentDidUpdate() { //to scroll on each word because we do not know where a paragraph could wrap depending on screensize/zoom
-    if(this.state.textInput === '') {
+  componentDidUpdate() { 
+    //always scroll to each word as we type to keep current word visible on page when page is smaller than its content for good UX
+    if(this.state.textInput === '') {//check each word because we do not know where a paragraph could wrap depending on screensize/zoom
       let options = {behavior: 'smooth'} //smooth scroll provides good UX when typing
       if(this.traversedToNewPage) {//smooth scrolling will confuse user on new page, looks like scrolling up same page
         options = {};//get rid of smooth
         this.traversedToNewPage = false;//reset flag 
       }//check bc got a componentDidUpdate on refresh once and app broke
-      (document.getElementById('currentWord')) && document.getElementById('currentWord').scrollIntoView(options);
+      if(document.getElementById('currentWord')) { //keep 
+        (!this.isIOS) ? document.getElementById('currentWord').scrollIntoView(options) :
+        document.getElementById('currentWord').scrollIntoView(false) //ios does not support options, cannot false and smooth true breaks bc scrolling
+      }
     }
   }
 
