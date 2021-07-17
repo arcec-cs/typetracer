@@ -128,6 +128,7 @@ class RegisterSignIn extends React.Component {
                   type='password'
                   maxLength='50'
                   value={this.state.password}
+                  onKeyPress={(e)=> (e.key === 'Enter') && this.onSubmit()}
                 />
               </div>
             </fieldset>
