@@ -9,7 +9,7 @@ smoothscroll.polyfill(); //for safari
 // isCorrect, charStart and charEnd -shall be used in sub component Sentence for styling of characters 
 const Page = ({text, isCorrect, paraCur, senCur, charStart, charEnd}) => {
   //To dynamically size page on resize //206 is the size of all the bars
-  const [height, setHeight] = useState((window.visualViewport ? window.visualViewport.height : window.innerHeight) - 206 + 'px');
+  const [height, setHeight] = useState((window.visualViewport ? window.visualViewport.height : window.innerHeight) - 210 + 'px');
   
   //set eventListener for resize when component mounts, used to size page height based on remianing space
   useEffect(() => {
