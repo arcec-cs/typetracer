@@ -13,12 +13,13 @@ const NavBar = ({routeChange, signedIn, signOut, menuIsOpen, menuStateChange, cl
           <span className='flex items-center'><Logo routeChange={routeChange}/></span>
         </nav>
       </div>
-      <Menu 
-      right 
-      isOpen={menuIsOpen} 
-      burgerButtonClassName='top-1 right-2 h1 w1' styles={styles} 
-      onStateChange={(state) => menuStateChange(state)}
-      > 
+    <Menu 
+    right 
+    isOpen={menuIsOpen} 
+    burgerButtonClassName='top-1 right-0 mr3 mr4-ns' 
+    styles={styles} 
+    onStateChange={(state) => menuStateChange(state)}
+    > 
       <h2 className='underline mt0 white'>Menu</h2>
       <a
       style={{outline: 'none'}} 
@@ -72,7 +73,7 @@ const NavBar = ({routeChange, signedIn, signOut, menuIsOpen, menuStateChange, cl
         >
         {`Sign Out`} &#128100;
         </a>
-      }
+        }
       </Menu>
     </span>
   );
