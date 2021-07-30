@@ -1,6 +1,6 @@
 export default {
   bmBurgerButton: {
-    position: 'absolute',
+    position: 'fixed',
     width: '24px',
     height: '20px',
     right: '0px',
