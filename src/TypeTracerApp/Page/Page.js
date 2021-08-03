@@ -8,16 +8,16 @@ smoothscroll.polyfill(); //for safari
 // text- shall be the whole text of the page
 // isCorrect, charStart and charEnd -shall be used in sub component Sentence for styling of characters 
 const Page = ({text, isCorrect, paraCur, senCur, charStart, charEnd}) => {
+  const barOffset = 210; //height of all bars 
   //To dynamically size page on resize //206 is the size of all the bars
-  const [height, setHeight] = useState((window.visualViewport ? window.visualViewport.height : window.innerHeight) - 210 + 'px');
+  const [height, setHeight] = useState((window.visualViewport ? window.visualViewport.height : window.innerHeight) - barOffset + 'px');
   
   //set eventListener for resize when component mounts, used to size page height based on remianing space
   useEffect(() => {
     //visualViewport to accomidatate mobile devices
     const hasApi = window.visualViewport ? true : false; //check for feature
     const getHeightType = () => hasApi ? () => window.visualViewport.height : () => window.innerHeight; //HOC for closure
-    const getHeight = getHeightType(); //use closure so we dont have to check every resize  
-    const barOffset = 206; //height of all bars 
+    const getHeight = getHeightType(); //use closure so we dont have to check every resize   
     const handleResize = () => setHeight(getHeight() - barOffset + 'px');
     //set event listener, use visualViewport where supported bc accounts for browser UI/keyboards for mobile displays
     if(hasApi) window.visualViewport.addEventListener('resize', () => handleResize());
