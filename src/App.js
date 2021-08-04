@@ -12,7 +12,6 @@ class App extends Component {
       isSignedIn: false,
       route:'landingPage',
       isMenuOpen: false,
-      accessModal: false,
     }
   }
 
@@ -44,7 +43,6 @@ class App extends Component {
   onMenuStateChange = (state) => this.setState({isMenuOpen: state.isOpen})//part of documentation 
   closeMenu = () => this.setState({isMenuOpen: false})
   
-
   render() {
     let page;
     switch (this.state.route) {
