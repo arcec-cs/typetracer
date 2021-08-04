@@ -10,7 +10,13 @@ const NavBar = ({routeChange, signedIn, signOut, menuIsOpen, menuStateChange, cl
     <span id='NavBar'>
       <div className='bg-black' style= {{width: "100", position: "sticky", top: "0", zIndex: 2}}> 
         <nav className='flex justify-between bb b--white-10'>
-          <span className='flex items-center'><Logo routeChange={routeChange}/></span>
+          <span className='flex items-center'>
+            <Logo 
+            click={() => {
+              routeChange('landingPage'); 
+              closeMenu();
+            }}/>
+          </span>
         </nav>
       </div>
     <Menu 

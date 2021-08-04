@@ -16,11 +16,11 @@ const LandingPage = ({routeChange}) => {
   return (
       // 100vh so CardContainer occupy remaining viewport on s/m devices; minHeight so children dont overlap on horizontal resize for m display 
       <div name='PageContainer' className='flex flex-column items-center h-navOffset h-min-landing'>
-        <section name='Intro' className='w-90 w-80-ns tc mb4-nl' >
-          <h2 className='f4 f3-m f2-l'>{'Typetracer - The destinaiton to type classic works from cover to cover'}</h2>
+        <header name='LPHeader' className='w-90 w-80-ns tc mb4-nl' >
+          <h2 className='f4 f3-m f2-l'>{'Typetracer - The destination to type classic works from cover to cover'}</h2>
           <h3 className='f6 f5-l'>{'Practice typing while enjoying from a selection of over 280 of the Public Domain\'s best texts:'}</h3>
           <div className='f5 f3-ns'><ReactRotatingText items={bookList}/></div>
-        </section>
+        </header>
         {/* h-100-nl takes up 100 percent of remaining view port for s/m devices*/}
         <section name='CTACardContainer' className={`'
           flex flex-column justify-around h-80 
